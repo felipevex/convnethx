@@ -26,4 +26,5 @@ typedef Opt = {
     @:optional var bias_pref:Float;
 
     @:optional var num_neurons:Int;
+    @:optional var drop_prob:Float;
 }

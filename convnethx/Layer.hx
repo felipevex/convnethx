@@ -28,7 +28,7 @@ class Layer {
 
     }
 
-    public function forward(V:Vol, is_training:Bool):Vol {
+    public function forward(V:Vol, is_training:Bool = false):Vol {
         return V; // simply identity function for now
     }
 

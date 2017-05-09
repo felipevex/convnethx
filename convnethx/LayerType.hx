@@ -4,4 +4,5 @@ enum LayerType {
     INPUT;
     CONV;
     FC;
+    DROPOUT;
 }
