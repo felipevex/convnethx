@@ -2,15 +2,6 @@ package convnethx;
 
 class LayerInput extends Layer {
 
-    public var in_act:Vol;
-    public var out_act:Vol;
-
-    public var out_depth:Int;
-    public var out_sx:Int;
-    public var out_sy:Int;
-
-    public var layer_type:LayerType;
-
     public function new(opt:Opt) {
         super(opt);
 
