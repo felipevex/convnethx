@@ -48,6 +48,12 @@ class Utils {
         return new Float64Array(n);
     }
 
+    // a helper function, since tanh is not yet part of ECMAScript. Will be in v6.
+    inline public static function tanh(x:Float):Float {
+        var y:Float = Math.exp(2 * x);
+        return (y - 1) / (y + 1);
+    }
+
     public static function convertToFloat64Array(values:Array<Float>):Float64Array {
         var result:Float64Array = zeros(values.length);
 

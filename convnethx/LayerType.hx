@@ -8,4 +8,8 @@ class LayerType {
     public inline static var SOFTMAX:String = "softmax";
     public inline static var REGRESSION:String = "regression";
     public inline static var SVM:String = "svm";
+    public inline static var RELU:String = "relu";
+    public inline static var SIGMOID:String = "sigmoid";
+    public inline static var MAXOUT:String = "maxout";
+    public inline static var TANH:String = "tanh";
 }

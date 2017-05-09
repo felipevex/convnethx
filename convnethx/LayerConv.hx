@@ -1,6 +1,6 @@
 package convnethx;
 
-class LayerDotProducts extends Layer {
+class LayerConv extends Layer {
 
     public var stride:Int;
     public var pad:Int;
