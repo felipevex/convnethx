@@ -102,7 +102,7 @@ class LayerDotProducts extends Layer {
         return this.out_act;
     }
 
-    override public function backward():Void {
+    override public function backward(y:Array<Float> = null):Float {
 
         var V:Vol = this.in_act;
         V.dw = Utils.zeros(V.w.length); // zero out gradient wrt bottom data, we're about to fill it
@@ -153,6 +153,8 @@ class LayerDotProducts extends Layer {
                 }
             }
         }
+
+        return 0;
     }
 
     override public function getParamsAndGrads():Array<Dynamic> {

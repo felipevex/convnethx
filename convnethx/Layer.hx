@@ -2,6 +2,8 @@ package convnethx;
 
 class Layer {
 
+    public var num_inputs:Int;
+
     public var in_act:Vol;
     public var out_act:Vol;
 
@@ -19,7 +21,7 @@ class Layer {
     public var l1_decay_mul:Float;
     public var l2_decay_mul:Float;
 
-    public var layer_type:LayerType;
+    public var layer_type:String;
 
     public var filters:Array<Vol>;
     public var biases:Vol;
@@ -32,8 +34,8 @@ class Layer {
         return V; // simply identity function for now
     }
 
-    public function backward():Void {
-
+    public function backward(y:Array<Float> = null):Float {
+        return 0;
     }
 
     public function getParamsAndGrads():Array<Dynamic> {

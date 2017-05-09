@@ -1,10 +1,8 @@
 package convnethx;
 
-import Array;
 import haxe.io.Float64Array;
-class LayerFullyConn extends Layer {
 
-    public var num_inputs:Int;
+class LayerFullyConn extends Layer {
 
     public function new(opt:Opt) {
         super(opt);
@@ -58,7 +56,7 @@ class LayerFullyConn extends Layer {
         return this.out_act;
     }
 
-    override public function backward():Void {
+    override public function backward(y:Array<Float> = null):Float {
         var V:Vol = this.in_act;
 
         V.dw = Utils.zeros(V.w.length); // zero out the gradient in input Vol
@@ -75,6 +73,8 @@ class LayerFullyConn extends Layer {
 
             this.biases.dw[i] += chain_grad;
         }
+
+        return 0;
     }
 
     override public function getParamsAndGrads():Array<Dynamic> {

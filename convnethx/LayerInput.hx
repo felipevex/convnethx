@@ -19,7 +19,6 @@ class LayerInput extends Layer {
         return this.out_act; // simply identity function for now
     }
 
-
     override public function toJSON():Dynamic {
         var json:Dynamic = {};
 

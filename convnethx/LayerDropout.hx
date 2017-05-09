@@ -63,7 +63,7 @@ class LayerDropout extends Layer {
         return this.out_act; // dummy identity function for now
     }
 
-    override public function backward():Void {
+    override public function backward(y:Array<Float>):Float {
         var V:Vol = this.in_act; // we need to set dw of this
         var chain_grad:Vol = this.out_act;
 
@@ -75,6 +75,8 @@ class LayerDropout extends Layer {
                 V.dw[i] = chain_grad.dw[i]; // copy over the gradient
             }
         }
+
+        return 0;
     }
 
     override public function toJSON():Dynamic {
