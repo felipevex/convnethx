@@ -12,4 +12,5 @@ class LayerType {
     public inline static var SIGMOID:String = "sigmoid";
     public inline static var MAXOUT:String = "maxout";
     public inline static var TANH:String = "tanh";
+    public inline static var LNR:String = "lrn";
 }

@@ -28,4 +28,9 @@ typedef Opt = {
     @:optional var num_neurons:Int;
     @:optional var drop_prob:Float;
     @:optional var group_size:Int;
+
+    @:optional var k:Int;
+    @:optional var n:Int;
+    @:optional var alpha:Int;
+    @:optional var beta:Int;
 }
