@@ -26,6 +26,9 @@ class Layer {
     public var filters:Array<Vol>;
     public var biases:Vol;
 
+    public var stride:Int;
+    public var pad:Int;
+
     public function new(opt:Opt) {
 
     }

@@ -2,9 +2,6 @@ package convnethx;
 
 class LayerConv extends Layer {
 
-    public var stride:Int;
-    public var pad:Int;
-
     public function new(opt:Opt) {
         super(opt);
 
