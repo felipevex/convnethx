@@ -82,7 +82,7 @@ class LayerMaxout extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         var V:Vol = this.in_act; // we need to set dw of this
         var V2:Vol = this.out_act;
         var N:Int = this.out_depth;
@@ -108,10 +108,8 @@ class LayerMaxout extends Layer {
                 }
             }
         }
-    }
 
-    override public function getParamsAndGrads():Array<Dynamic> {
-
+        return null
     }
 
     override public function toJSON():Dynamic {

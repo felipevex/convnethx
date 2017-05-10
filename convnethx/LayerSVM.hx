@@ -19,7 +19,7 @@ class LayerSVM extends Layer {
         return V;
     }
 
-    override public function backward(y:Array<Float>):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         // compute and accumulate gradient wrt weights and bias of this layer
         var x:Vol = this.in_act;
         x.dw = Utils.zeros(x.w.length); // zero out the gradient of input Vol

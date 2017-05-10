@@ -22,7 +22,7 @@ class LayerLocalResponseNormalization extends Layer {
         this.out_sx = opt.in_sx;
         this.out_sy = opt.in_sy;
         this.out_depth = opt.in_depth;
-        this.layer_type = LayerType.LNR;
+        this.layer_type = LayerType.LRN;
 
         // checks
         if (this.n % 2 == 0) {
@@ -69,7 +69,7 @@ class LayerLocalResponseNormalization extends Layer {
         return this.out_act; // dummy identity function for now
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         // evaluate gradient wrt data
         var V:Vol = this.in_act; // we need to set dw of this
         V.dw = Utils.zeros(V.w.length); // zero out gradient wrt data
@@ -103,7 +103,7 @@ class LayerLocalResponseNormalization extends Layer {
             }
         }
 
-        return 0;
+        return null;
     }
 
     override public function toJSON():Dynamic {

@@ -1,6 +1,9 @@
 package convnethx;
 
 typedef Opt = {
+    @:optional var type:String;
+    @:optional var activation:String;
+
     @:optional var width:Int;
     @:optional var height:Int;
 
@@ -25,6 +28,7 @@ typedef Opt = {
 
     @:optional var bias_pref:Float;
 
+    @:optional var num_classes:Int;
     @:optional var num_neurons:Int;
     @:optional var drop_prob:Float;
     @:optional var group_size:Int;

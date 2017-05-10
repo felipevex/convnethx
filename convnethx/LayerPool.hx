@@ -89,7 +89,7 @@ class LayerPool extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         // pooling layers have no parameters, so simply compute
         // gradient wrt data here
 
@@ -118,6 +118,8 @@ class LayerPool extends Layer {
                 }
             }
         }
+
+        return null;
     }
 
     override public function toJSON():Dynamic {

@@ -99,7 +99,7 @@ class LayerConv extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
 
         var V:Vol = this.in_act;
         V.dw = Utils.zeros(V.w.length); // zero out gradient wrt bottom data, we're about to fill it
@@ -151,7 +151,7 @@ class LayerConv extends Layer {
             }
         }
 
-        return 0;
+        return null;
     }
 
     override public function getParamsAndGrads():Array<Dynamic> {

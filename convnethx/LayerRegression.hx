@@ -26,7 +26,7 @@ class LayerRegression extends Layer {
     * or it can be a struct [0] = (i)dim [1] = (x)val where we only want to
     * regress on dimension i and asking it to have value x (array length == 2)
     **/
-    override public function backward(y:Array<Float>):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
 
         // compute and accumulate gradient wrt weights and bias of this layer
         var x:Vol = this.in_act;

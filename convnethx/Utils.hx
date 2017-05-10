@@ -189,10 +189,8 @@ class Utils {
         return result;
     }
 
-    public static function assert(condition:Bool, message:String):Void {
+    public static function assert(condition:Bool, message:String = "Assertion failed"):Void {
         if (!condition) {
-            message = message || "Assertion failed";
-
             throw message;
         }
     }

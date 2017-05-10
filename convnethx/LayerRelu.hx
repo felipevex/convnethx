@@ -35,7 +35,7 @@ class LayerRelu extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         var V:Vol = this.in_act; // we need to set dw of this
         var V2:Vol = this.out_act;
         var N:Int = V.w.length;
@@ -47,7 +47,7 @@ class LayerRelu extends Layer {
             else V.dw[i] = V2.dw[i];
         }
 
-        return 0;
+        return null;
     }
 
     override public function toJSON():Dynamic {

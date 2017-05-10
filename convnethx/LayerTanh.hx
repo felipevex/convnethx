@@ -32,7 +32,7 @@ class LayerTanh extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Float {
+    override public function backward(y:Array<Float> = null):Null<Float> {
         var V:Vol = this.in_act; // we need to set dw of this
         var V2:Vol = this.out_act;
         var N:Int = V.w.length;
@@ -43,7 +43,7 @@ class LayerTanh extends Layer {
             V.dw[i] = (1.0 - v2wi * v2wi) * V2.dw[i];
         }
 
-        return 0;
+        return null;
     }
 
     override public function toJSON():Dynamic {

@@ -37,8 +37,8 @@ class Layer {
         return V; // simply identity function for now
     }
 
-    public function backward(y:Array<Float> = null):Float {
-        return 0;
+    public function backward(y:Array<Float> = null):Null<Float> {
+        return null;
     }
 
     public function getParamsAndGrads():Array<Dynamic> {
