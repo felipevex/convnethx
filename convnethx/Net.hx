@@ -199,7 +199,7 @@ class Net {
         for (i in 0 ... this.layers.length) {
             var layer_reponse:Array<Dynamic> = this.layers[i].getParamsAndGrads();
 
-            for(j in 0 ... layer_reponse.length) {
+            for (j in 0 ... layer_reponse.length) {
                 response.push(layer_reponse[j]);
             }
         }
