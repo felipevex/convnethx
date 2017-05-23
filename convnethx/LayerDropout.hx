@@ -45,9 +45,9 @@ class LayerDropout extends Layer {
                 if(Math.random() < this.drop_prob) {
                     // drop!
                     V2.w[i] = 0;
-                    this.dropped[i] = true;
+                    this.dropped[i] = 1;
                 } else {
-                    this.dropped[i] = false;
+                    this.dropped[i] = 0;
                 }
             }
 
@@ -71,7 +71,7 @@ class LayerDropout extends Layer {
         V.dw = Utils.zeros(N); // zero out gradient wrt data
 
         for(i in 0 ... N) {
-            if (!(this.dropped[i])) {
+            if (this.dropped[i] == 0) {
                 V.dw[i] = chain_grad.dw[i]; // copy over the gradient
             }
         }

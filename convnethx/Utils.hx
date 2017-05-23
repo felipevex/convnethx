@@ -80,7 +80,7 @@ class Utils {
     public static function maxmin(w:Array<Float>):{maxi: Int, maxv: Float, mini: Int, minv: Float, dv: Float} {
 
         if(w.length == 0) {
-            return {};
+            return null;
         }
 
         var maxv:Float = w[0];

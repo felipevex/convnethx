@@ -47,7 +47,7 @@ class Trainer {
         this.regression = this.net.layers[this.net.layers.length - 1].layer_type == LayerType.REGRESSION;
     }
 
-    public function train(x, y) {
+    public function train(x:Vol, y:Vol, volList:Array<Vol> = null) {
         var start:Float = Date.now().getTime();
         this.net.forward(x, true); // also set the flag that lets the net know we're just training
         var end:Float = Date.now().getTime();
@@ -63,8 +63,8 @@ class Trainer {
 
         var bwd_time:Float = end - start;
 
-        if (this.regression && y.constructor !== Array)
-            trace("Warning: a regression net requires an array as training output vector.");
+        if (this.regression && volList == null)
+            throw "Warning: a regression net requires an array as training output vector.";
 
 
         this.k++;

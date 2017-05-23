@@ -12,7 +12,7 @@ class LayerInput extends Layer {
         this.layer_type = LayerType.INPUT;
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
         this.out_act = V;
 

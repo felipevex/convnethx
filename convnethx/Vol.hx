@@ -64,12 +64,12 @@ class Vol {
         return this.w[index];
     }
 
-    public function set(x:Int, y:Int, d:Int, value:Float):Float {
+    public function set(x:Int, y:Int, d:Int, value:Float):Void {
         var index:Int = this.getIndex(x, y, d);
         this.w[index] = value;
     }
 
-    public function add(x:Int, y:Int, d:Int, value:Float):Float {
+    public function add(x:Int, y:Int, d:Int, value:Float):Void {
         var index:Int = this.getIndex(x, y, d);
         this.w[index] += value;
     }
@@ -79,12 +79,12 @@ class Vol {
         return this.dw[index];
     }
 
-    public function set_grad(x:Int, y:Int, d:Int, value:Float):Float {
+    public function set_grad(x:Int, y:Int, d:Int, value:Float):Void {
         var index:Int = this.getIndex(x, y, d);
         this.w[index] = value;
     }
 
-    public function add_grad(x:Int, y:Int, d:Int, value:Float):Float {
+    public function add_grad(x:Int, y:Int, d:Int, value:Float):Void {
         var index:Int = this.getIndex(x, y, d);
         this.w[index] += value;
     }

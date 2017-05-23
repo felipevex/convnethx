@@ -58,7 +58,7 @@ class LayerSoftmax extends Layer {
         var x:Vol = this.in_act;
         x.dw = Utils.zeros(x.w.length); // zero out the gradient of input Vol
 
-        var yValue:Float = y[0];
+        var yValue:Int = Std.int(y[0]);
 
         for(i in 0 ... this.out_depth) {
             var indicator:Float = i == yValue ? 1.0 : 0.0;
@@ -68,7 +68,7 @@ class LayerSoftmax extends Layer {
         }
 
         // loss is the class negative log likelihood
-        return - Math.log(this.es[y]);
+        return - Math.log(this.es[yValue]);
     }
 
     override public function toJSON():Dynamic {

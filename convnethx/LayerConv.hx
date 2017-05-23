@@ -40,7 +40,7 @@ class LayerConv extends Layer {
         this.biases = new Vol(1, 1, this.out_depth, [bias]);
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         // optimized code by @mdda that achieves 2x speedup over previous version
 
         this.in_act = V;
@@ -59,12 +59,12 @@ class LayerConv extends Layer {
 
             for (ay in 0 ... this.out_sy) { // xy_stride
 
-                y += xy_stride
+                y += xy_stride;
                 x = -this.pad | 0;
 
                 for (ax in 0 ... this.out_sx) { // xy_stride
 
-                    x += xy_stride
+                    x += xy_stride;
 
                     // convolve centered at this particular location
                     var a:Float = 0.0;
@@ -120,7 +120,7 @@ class LayerConv extends Layer {
 
                 for (ax in 0 ... this.out_sx) {  // xy_stride
 
-                    x += xy_stride
+                    x += xy_stride;
 
                     // convolve centered at this particular location
                     var chain_grad:Float = this.out_act.get_grad(ax,ay,d); // gradient from above, from chain rule

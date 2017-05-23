@@ -18,7 +18,7 @@ class LayerTanh extends Layer {
         this.layer_type = LayerType.TANH;
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
         var V2:Vol = V.cloneAndZero();

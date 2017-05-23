@@ -30,7 +30,7 @@ class LayerLocalResponseNormalization extends Layer {
         }
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
         var A:Vol = V.cloneAndZero();
@@ -48,7 +48,7 @@ class LayerLocalResponseNormalization extends Layer {
 
                     var den:Float = 0.0;
 
-                    for (j in Math.max(0, i - n2) ... Math.min(i + n2 + 1, V.depth)) {
+                    for (j in Std.int(Math.max(0, i - n2)) ... Std.int(Math.min(i + n2 + 1, V.depth))) {
                         var aa:Float = V.get(x, y, j);
 
                         den += aa * aa;
@@ -88,7 +88,7 @@ class LayerLocalResponseNormalization extends Layer {
                     var SB2:Float = SB*SB;
 
                     // normalize in a window of size n
-                    for(j in Math.max(0, i-n2) ... Math.min(i + n2 + 1, V.depth)) {
+                    for(j in Std.int(Math.max(0, i-n2)) ... Std.int(Math.min(i + n2 + 1, V.depth))) {
                         var aj:Float = V.get(x, y, j);
                         var g:Float = -aj * this.beta * Math.pow(S, this.beta - 1) * this.alpha / this.n * 2 * aj;
 

@@ -24,22 +24,24 @@ class LayerSVM extends Layer {
         var x:Vol = this.in_act;
         x.dw = Utils.zeros(x.w.length); // zero out the gradient of input Vol
 
+        var yValue:Int = Std.int(y[0]);
+
         // we're using structured loss here, which means that the score
         // of the ground truth should be higher than the score of any other
         // class, by a margin
-        var yscore:Float = x.w[Std.int(y[0])]; // score of ground truth
+        var yscore:Float = x.w[yValue]; // score of ground truth
         var margin:Float = 1.0;
         var loss:Float = 0.0;
 
         for(i in 0 ... this.out_depth) {
-            if(Std.int(y[0] == i)) { continue; }
+            if (Std.int(y[0]) == i) { continue; }
 
             var ydiff:Float = -yscore + x.w[i] + margin;
 
             if(ydiff > 0) {
                 // violating dimension, apply loss
                 x.dw[i] += 1;
-                x.dw[y] -= 1;
+                x.dw[yValue] -= 1;
 
                 loss += ydiff;
             }

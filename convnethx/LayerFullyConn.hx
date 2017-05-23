@@ -34,7 +34,7 @@ class LayerFullyConn extends Layer {
         this.biases = new Vol(1, 1, this.out_depth, [bias]);
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
         var A:Vol = new Vol(1, 1, this.out_depth, [0.0]);

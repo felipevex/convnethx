@@ -7,6 +7,7 @@ package convnethx;
 **/
 import haxe.io.Float64Array;
 import convnethx.Utils;
+
 class Net {
 
     public var layers:Array<Layer>;
@@ -25,9 +26,9 @@ class Net {
         // create the layers
         this.layers = [];
 
-        for(i in 0 ... defs.length) {
+        for (i in 0 ... defs.length) {
 
-            var prev:Opt;
+            var prev:Layer;
 
             var def:Opt = defs[i];
 
@@ -40,19 +41,19 @@ class Net {
             }
 
             switch(def.type) {
-                case LayerType.FC : this.layers.push(new LayerFullyConn(def)); break;
-                case LayerType.LRN : this.layers.push(new LayerLocalResponseNormalization(def)); break;
-                case LayerType.DROPOUT : this.layers.push(new LayerDropout(def)); break;
-                case LayerType.INPUT : this.layers.push(new LayerInput(def)); break;
-                case LayerType.SOFTMAX : this.layers.push(new LayerSoftmax(def)); break;
-                case LayerType.REGRESSION : this.layers.push(new LayerRegression(def)); break;
-                case LayerType.CONV : this.layers.push(new LayerConv(def)); break;
-                case LayerType.POOL : this.layers.push(new LayerPool(def)); break;
-                case LayerType.RELU : this.layers.push(new LayerRelu(def)); break;
-                case LayerType.SIGMOID : this.layers.push(new LayerSigmoid(def)); break;
-                case LayerType.TANH : this.layers.push(new LayerTanh(def)); break;
-                case LayerType.MAXOUT : this.layers.push(new LayerMaxout(def)); break;
-                case LayerType.SVM : this.layers.push(new LayerSVM(def)); break;
+                case LayerType.FC : this.layers.push(new LayerFullyConn(def));
+                case LayerType.LRN : this.layers.push(new LayerLocalResponseNormalization(def));
+                case LayerType.DROPOUT : this.layers.push(new LayerDropout(def));
+                case LayerType.INPUT : this.layers.push(new LayerInput(def));
+                case LayerType.SOFTMAX : this.layers.push(new LayerSoftmax(def));
+                case LayerType.REGRESSION : this.layers.push(new LayerRegression(def));
+                case LayerType.CONV : this.layers.push(new LayerConv(def));
+                case LayerType.POOL : this.layers.push(new LayerPool(def));
+                case LayerType.RELU : this.layers.push(new LayerRelu(def));
+                case LayerType.SIGMOID : this.layers.push(new LayerSigmoid(def));
+                case LayerType.TANH : this.layers.push(new LayerTanh(def));
+                case LayerType.MAXOUT : this.layers.push(new LayerMaxout(def));
+                case LayerType.SVM : this.layers.push(new LayerSVM(def));
 
                 case _: trace('ERROR: UNRECOGNIZED LAYER TYPE: ${def.type}');
             }
@@ -156,9 +157,9 @@ class Net {
     // forward prop the network.
     // The trainer class passes is_training = true, but when this function is
     // called from outside (not from the trainer), it defaults to prediction mode
-    public function forward(V:Vol, is_training:Bool = false):Layer {
+    public function forward(V:Vol, is_training:Bool = false):Vol {
 
-        var act:Layer = this.layers[0].forward(V, is_training);
+        var act:Vol = this.layers[0].forward(V, is_training);
 
         for (i in 1 ... this.layers.length) {
             act = this.layers[i].forward(act, is_training);
@@ -229,8 +230,9 @@ class Net {
     }
 
     public function toJSON():Array<Dynamic> {
-        var json:Array<Dynamic> = {};
-        json.layers = [];
+        var json:Dynamic = {
+            layers : []
+        };
 
         for(i in 0 ... this.layers.length) {
             json.layers.push(this.layers[i].toJSON());
@@ -243,23 +245,24 @@ class Net {
         this.layers = [];
 
         for(i in 0 ... json.layers.length) {
-            var Lj:Dynamic = json.layers[i]
+            var Lj:Dynamic = json.layers[i];
             var t:String = Lj.layer_type;
             var L:Layer;
 
-            if(t==LayerType.INPUT) L = new LayerInput({});
-            if(t==LayerType.RELU) L = new LayerRelu({});
-            if(t==LayerType.SIGMOID) L = new LayerSigmoid({});
-            if(t==LayerType.TANH) L = new LayerTanh({});
-            if(t==LayerType.DROPOUT) L = new LayerDropout({});
-            if(t==LayerType.CONV) L = new LayerConv({});
-            if(t==LayerType.POOL) L = LayerPool({});
-            if(t==LayerType.LRN) L = new LayerLocalResponseNormalization({});
-            if(t==LayerType.SOFTMAX) L = new LayerSoftmax({});
-            if(t==LayerType.REGRESSION) L = new LayerRegression({});
-            if(t==LayerType.FC) L = new LayerFullyConn({});
-            if(t==LayerType.MAXOUT) L = new LayerMaxout({});
-            if(t==LayerType.SVM) L = new LayerSVM({});
+            if(t == LayerType.INPUT) L = new LayerInput({});
+            else if(t == LayerType.RELU) L = new LayerRelu({});
+            else if(t == LayerType.SIGMOID) L = new LayerSigmoid({});
+            else if(t == LayerType.TANH) L = new LayerTanh({});
+            else if(t == LayerType.DROPOUT) L = new LayerDropout({});
+            else if(t == LayerType.CONV) L = new LayerConv({});
+            else if(t == LayerType.POOL) L = new LayerPool({});
+            else if(t == LayerType.LRN) L = new LayerLocalResponseNormalization({});
+            else if(t == LayerType.SOFTMAX) L = new LayerSoftmax({});
+            else if(t == LayerType.REGRESSION) L = new LayerRegression({});
+            else if(t == LayerType.FC) L = new LayerFullyConn({});
+            else if(t == LayerType.MAXOUT) L = new LayerMaxout({});
+            else if(t == LayerType.SVM) L = new LayerSVM({});
+            else L = new Layer({});
 
             L.fromJSON(Lj);
 

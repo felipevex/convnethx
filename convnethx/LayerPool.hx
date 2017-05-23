@@ -32,7 +32,7 @@ class LayerPool extends Layer {
         this.switchy = Utils.zeros(this.out_sx * this.out_sy * this.out_depth);
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
         var A:Vol = new Vol(this.out_sx, this.out_sy, this.out_depth, [0]);
@@ -44,14 +44,14 @@ class LayerPool extends Layer {
             var y:Int = -this.pad;
 
             for (ax in 0 ... this.out_sx) {
-                x += this.stride
+                x += this.stride;
                 y = -this.pad;
 
                 for(ay in 0 ... this.out_sy) {
                     y += this.stride;
 
                     // convolve centered at this particular location
-                    var a:Int = -99999; // hopefully small enough ;\
+                    var a:Float = -99999; // hopefully small enough ;\
                     var winx:Int = -1;
                     var winy:Int = -1;
 
@@ -113,7 +113,10 @@ class LayerPool extends Layer {
 
                     var chain_grad:Float = this.out_act.get_grad(ax, ay, d);
 
-                    V.add_grad(this.switchx[n], this.switchy[n], d, chain_grad);
+                    var indexX:Int = Std.int(this.switchx[n]);
+                    var indexY:Int = Std.int(this.switchy[n]);
+
+                    V.add_grad(indexX, indexY, d, chain_grad);
                     n++;
                 }
             }

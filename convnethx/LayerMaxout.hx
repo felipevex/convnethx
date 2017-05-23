@@ -22,7 +22,7 @@ class LayerMaxout extends Layer {
         this.switches = Utils.zeros(this.out_sx * this.out_sy * this.out_depth); // useful for backprop
     }
 
-    override public function forward(V:Vol, is_training:Bool):Vol {
+    override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
         var N:Int = this.out_depth;
@@ -48,7 +48,8 @@ class LayerMaxout extends Layer {
                 }
 
                 V2.w[i] = a;
-            this.switches[i] = ix + ai;
+
+                this.switches[i] = ix + ai;
             }
         } else {
             var n:Int = 0; // counter for switches
@@ -93,7 +94,10 @@ class LayerMaxout extends Layer {
         if (this.out_sx == 1 && this.out_sy == 1) {
             for (i in 0 ... N) {
                 var chain_grad:Float = V2.dw[i];
-                V.dw[this.switches[i]] = chain_grad;
+
+                var index:Int = Std.int(this.switches[i]);
+
+                V.dw[index] = chain_grad;
             }
         } else {
             // bleh okay, lets do this the hard way
@@ -102,14 +106,17 @@ class LayerMaxout extends Layer {
                 for(y in 0 ... V2.sy) {
                     for(i in 0 ... N) {
                         var chain_grad:Float = V2.get_grad(x, y, i);
-                        V.set_grad(x, y, this.switches[n], chain_grad);
+
+                        var index:Int = Std.int(this.switches[i]);
+
+                        V.set_grad(x, y, index, chain_grad);
                         n++;
                     }
                 }
             }
         }
 
-        return null
+        return null;
     }
 
     override public function toJSON():Dynamic {
