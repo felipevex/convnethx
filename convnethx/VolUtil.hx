@@ -2,61 +2,72 @@ package convnethx;
 
 /**
 * Volume utilities
-* intended for use with data augmentation
-* crop is the size of output
-* dx,dy are offset wrt incoming volume, of the shift
-* fliplr is boolean on whether we also want to flip left<->right
 **/
 
 class VolUtil {
 
-    public function augment(V:Vol, crop:Int, dx:Null<Float> = null, dy:Null<Float> = null, fliplr:Bool = false):Vol {
+    /**
+    * intended for use with data augmentation
+    * crop is the size of output
+    * dx, dy are offset wrt incoming volume, of the shift
+    * flipHorizontal is boolean on whether we also want to flip left<->right
+    **/
+    public function augment(baseVolume:Vol, crop:Int, offsetX:Null<Float> = null, offsetY:Null<Float> = null, flipHorizontal:Bool = false):Vol {
         // note assumes square outputs of size crop x crop
 
-        if (dx == null) dx = Utils.randi(0, V.sx - crop);
-        if (dy == null) dy = Utils.randi(0, V.sy - crop);
+        if (offsetX == null) offsetX = Utils.randi(0, baseVolume.sx - crop);
+        if (offsetY == null) offsetY = Utils.randi(0, baseVolume.sy - crop);
 
         // randomly sample a crop in the input volume
-        var W:Vol;
+        var croppedVolume:Vol;
 
-        if (crop != V.sx || dx != 0 || dy != 0) {
-            W = new Vol(crop, crop, V.depth, 0.0);
+        if (crop != baseVolume.sx || offsetX != 0 || offsetY != 0) {
+
+            croppedVolume = new Vol(crop, crop, baseVolume.depth, 0);
 
             for (x in 0 ... crop) {
                 for (y in 0 ... crop) {
 
-                    if( x + dx < 0 || x + dx >= V.sx || y + dy < 0 || y + dy >= V.sy) continue; // oob
+                    if (
+                        x + offsetX < 0 ||
+                        x + offsetX >= baseVolume.sx ||
+                        y + offsetY < 0 ||
+                        y + offsetY >= baseVolume.sy
+                    ) continue;
 
-                    for(d in 0 ... V.depth) {
-                        W.set(x, y, d, V.get(x + dx, y + dy, d)); // copy data over
+                    for(d in 0 ... baseVolume.depth) {
+                        croppedVolume.set(x, y, d, baseVolume.get(x + offsetX, y + offsetY, d)); // copy data over
                     }
                 }
             }
         } else {
-            W = V;
+            // todo must be clonned???
+            croppedVolume = baseVolume.clone();
         }
 
-        if (fliplr) {
+        if (flipHorizontal) {
             // flip volume horziontally
 
-            var W2:Vol = W.cloneAndZero();
+            var flippedVolume:Vol = croppedVolume.cloneAndZero();
 
-            for (x in 0 ... W.sx) {
-                for (y in 0 ... W.sy) {
-                    for (d in 0 ... W.depth) {
-                        W2.set(x, y, d, W.get(W.sx - x - 1, y, d)); // copy data over
+            for (x in 0 ... croppedVolume.sx) {
+                for (y in 0 ... croppedVolume.sy) {
+                    for (d in 0 ... croppedVolume.depth) {
+                        flippedVolume.set(x, y, d, croppedVolume.get(croppedVolume.sx - x - 1, y, d)); // copy data over
                     }
                 }
             }
 
-            W = W2; //swap
+            croppedVolume = flippedVolume; //swap
         }
 
-        return W;
+        return croppedVolume;
     }
 
     public static function imageToVol(width:Int, height:Int, RGBA:Array<Int>, ?convertToGrayscale:Bool = false):Vol {
         if (width == 0 || height == 0 || width * height != Math.floor(RGBA.length/4)) throw "Wrong image size";
+
+        var result:Vol = null;
 
         if (convertToGrayscale) {
             var grayFloat:Array<Float> = [];
@@ -73,21 +84,17 @@ class VolUtil {
                 grayFloat.push(g / 255 - 0.5);
             }
 
-            var vol:Vol = new Vol(width, height, 1, 0);
-            vol.w = Utils.convertToFloat64Array(grayFloat);
-
-            return vol;
-
+            result = new Vol(width, height, 1, 0);
+            result.w = Utils.convertToFloat64Array(grayFloat);
         } else {
             // color volume
             var colorFloat:Array<Float> = [for(value in RGBA) {value / 255 - 0.5}]; // normalize image pixels to [-0.5, 0.5]
 
-            var vol:Vol = new Vol(width, height, 4, 0);
-            vol.w = Utils.convertToFloat64Array(colorFloat);
-
-            return vol;
+            result = new Vol(width, height, 4, 0);
+            result.w = Utils.convertToFloat64Array(colorFloat);
         }
 
+        return result;
     }
 
 

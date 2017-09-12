@@ -5,8 +5,10 @@ package convnethx;
 * constraints: Simple linear order
 * of layers, first layer input last layer a cost layer
 **/
-import haxe.io.Float64Array;
+import convnethx.helper.NetHelper;
+import convnethx.type.LayerType;
 import convnethx.Utils;
+import haxe.io.Float64Array;
 
 class Net {
 
@@ -24,40 +26,7 @@ class Net {
         defs = this.desugar(defs);
 
         // create the layers
-        this.layers = [];
-
-        for (i in 0 ... defs.length) {
-
-            var prev:Layer;
-
-            var def:Opt = defs[i];
-
-            if (i > 0) {
-                prev = this.layers[i-1];
-
-                def.in_sx = prev.out_sx;
-                def.in_sy = prev.out_sy;
-                def.in_depth = prev.out_depth;
-            }
-
-            switch(def.type) {
-                case LayerType.FC : this.layers.push(new LayerFullyConn(def));
-                case LayerType.LRN : this.layers.push(new LayerLocalResponseNormalization(def));
-                case LayerType.DROPOUT : this.layers.push(new LayerDropout(def));
-                case LayerType.INPUT : this.layers.push(new LayerInput(def));
-                case LayerType.SOFTMAX : this.layers.push(new LayerSoftmax(def));
-                case LayerType.REGRESSION : this.layers.push(new LayerRegression(def));
-                case LayerType.CONV : this.layers.push(new LayerConv(def));
-                case LayerType.POOL : this.layers.push(new LayerPool(def));
-                case LayerType.RELU : this.layers.push(new LayerRelu(def));
-                case LayerType.SIGMOID : this.layers.push(new LayerSigmoid(def));
-                case LayerType.TANH : this.layers.push(new LayerTanh(def));
-                case LayerType.MAXOUT : this.layers.push(new LayerMaxout(def));
-                case LayerType.SVM : this.layers.push(new LayerSVM(def));
-
-                case _: trace('ERROR: UNRECOGNIZED LAYER TYPE: ${def.type}');
-            }
-        }
+        this.layers = NetHelper.createLayers(defs);
     }
 
     private function desugar(defs:Array<Opt>):Array<Opt> {

@@ -1,6 +1,6 @@
-package convnethx.model;
+package convnethx.model.json;
 
-typedef DefVolume = {
+typedef JsonVol = {
     var sx:Int;
     var sy:Int;
     var depth:Int;

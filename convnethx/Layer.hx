@@ -1,5 +1,7 @@
 package convnethx;
 
+import convnethx.type.LayerType;
+
 class Layer {
 
     public var num_inputs:Int;
@@ -21,7 +23,7 @@ class Layer {
     public var l1_decay_mul:Float;
     public var l2_decay_mul:Float;
 
-    public var layer_type:String;
+    public var layer_type:LayerType;
 
     public var filters:Array<Vol>;
     public var biases:Vol;
@@ -29,7 +31,7 @@ class Layer {
     public var stride:Int;
     public var pad:Int;
 
-    public function new(opt:Opt) {
+    public function new() {
 
     }
 
@@ -45,13 +47,4 @@ class Layer {
         return [];
     }
 
-    public function toJSON():Dynamic {
-        var json = {};
-        return json;
-    }
-
-
-    public function fromJSON(json:Dynamic) {
-
-    }
 }

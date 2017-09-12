@@ -1,6 +1,6 @@
 package convnethx;
 
-import convnethx.model.DefVolume;
+import convnethx.model.json.JsonVol;
 import convnethx.Utils;
 import haxe.io.Float64Array;
 
@@ -24,7 +24,7 @@ class Vol {
     public var dw:Float64Array;
 
 
-    public function new(?sx:Int, ?sy:Int, ?depth:Int, ?constantValue:Float, ?volumeValues:Array<Float>) {
+    public function new(?sx:Int, ?sy:Int, ?depth:Int, ?constantValue:Null<Float>, ?volumeValues:Array<Float> = null) {
         if (volumeValues != null && volumeValues.length > 0) {
 
             this.sx = 1;
@@ -87,8 +87,8 @@ class Vol {
     public function addFromScaled(vol:Vol, scale:Float):Void for (i in 0 ... this.w.length) this.w[i] += (scale * vol.w[i]);
 
     // todo: we may want to only save d most significant digits to save space
-    public function toJSON():DefVolume {
-        var json:DefVolume = {
+    public function toJSON():JsonVol {
+        var json:JsonVol = {
             sx : this.sx,
             sy : this.sy,
             depth : this.depth,
@@ -99,7 +99,7 @@ class Vol {
         // we wont back up gradients to save space
     }
 
-    public function fromJSON(json:DefVolume):Void {
+    public function fromJSON(json:JsonVol):Void {
         this.sx = json.sx;
         this.sy = json.sy;
         this.depth = json.depth;

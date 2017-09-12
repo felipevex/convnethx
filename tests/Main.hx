@@ -1,5 +1,7 @@
 package tests;
 
+import tests.batches.NetTest;
+import tests.batches.LayerInputTest;
 import tests.batches.VolTest;
 import tests.batches.UtilsTest;
 import utest.ui.Report;
@@ -12,11 +14,11 @@ class Main {
 
         runner.addCase(new UtilsTest());
         runner.addCase(new VolTest());
+        runner.addCase(new LayerInputTest());
+        runner.addCase(new NetTest());
 
         Report.create(runner);
 
         runner.run();
-
-
     }
 }

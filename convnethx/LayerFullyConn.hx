@@ -1,28 +1,33 @@
 package convnethx;
 
+import convnethx.model.json.JsonLayerFC;
+import convnethx.type.LayerType;
+import convnethx.layer.model.LayerOption;
 import haxe.io.Float64Array;
 
 class LayerFullyConn extends Layer {
 
-    public function new(opt:Opt) {
-        super(opt);
+    public function new(option:LayerOption) {
+        super();
 
         // required
         // ok fine we will allow 'filters' as the word as well
-        this.out_depth = opt.num_neurons != null ? opt.num_neurons : opt.filters;
+        // todo must allow filter words??
+        // this.out_depth = opt.num_neurons != null ? opt.num_neurons : opt.filters;
+        this.out_depth = option.num_neurons;
 
         // optional
-        this.l1_decay_mul = opt.l1_decay_mul != null ? opt.l1_decay_mul : 0.0;
-        this.l2_decay_mul = opt.l2_decay_mul != null ? opt.l2_decay_mul : 1.0;
+        this.l1_decay_mul = option.l1_decay_mul != null ? option.l1_decay_mul : 0.0;
+        this.l2_decay_mul = option.l2_decay_mul != null ? option.l2_decay_mul : 1.0;
 
         // computed
-        this.num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
+        this.num_inputs = option.in_sx * option.in_sy * option.in_depth;
         this.out_sx = 1;
         this.out_sy = 1;
         this.layer_type = LayerType.FC;
 
         // initializations
-        var bias:Float = opt.bias_pref != null ? opt.bias_pref : 0.0;
+        var bias:Float = option.bias_pref != null ? option.bias_pref : 0.0;
         this.filters = [];
 
         for(i in 0 ... this.out_depth) {
@@ -103,29 +108,28 @@ class LayerFullyConn extends Layer {
         return response;
     }
 
-    override public function toJSON():Dynamic {
-        var json:Dynamic = {};
+    public function toJSON():JsonLayerFC {
+        var json:JsonLayerFC = {
+            layer_type : this.layer_type,
 
-        json.out_depth = this.out_depth;
-        json.out_sx = this.out_sx;
-        json.out_sy = this.out_sy;
-        json.layer_type = this.layer_type;
-        json.num_inputs = this.num_inputs;
-        json.l1_decay_mul = this.l1_decay_mul;
-        json.l2_decay_mul = this.l2_decay_mul;
+            out_depth : this.out_depth,
+            out_sx : this.out_sx,
+            out_sy : this.out_sy,
 
-        json.filters = [];
+            num_inputs : this.num_inputs,
 
-        for(i in 0 ... this.filters.length) {
-           json.filters.push(this.filters[i].toJSON());
-        }
+            l1_decay_mul : this.l1_decay_mul,
+            l2_decay_mul : this.l2_decay_mul,
 
-        json.biases = this.biases.toJSON();
+            filters : [for (filter in this.filters) filter.toJSON()],
+
+            biases : this.biases.toJSON()
+        };
 
         return json;
     }
 
-    override public function fromJSON(json:Dynamic):Void {
+    public function fromJSON(json:JsonLayerFC):Void {
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;
