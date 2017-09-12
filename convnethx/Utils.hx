@@ -1,5 +1,6 @@
 package convnethx;
 
+import convnethx.model.MaxMinValue;
 import haxe.io.Float64Array;
 
 class Utils {
@@ -29,15 +30,15 @@ class Utils {
     }
 
 
-    public static function randf(a:Float, b:Float):Float {
+    inline public static function randf(a:Float, b:Float):Float {
         return Math.random() * (b - a) + a;
     }
 
-    public static function randi(a:Int, b:Int):Int {
+    inline public static function randi(a:Int, b:Int):Int {
         return Math.floor(Math.random() * (b - a) + a);
     }
 
-    public static function randn(mu:Float, std:Float):Float{
+    inline public static function randn(mu:Float, std:Float):Float{
         return mu + gaussRandom() * std;
     }
 
@@ -77,11 +78,9 @@ class Utils {
     /**
     * return max and min of a given non-empty array.
     **/
-    public static function maxmin(w:Array<Float>):{maxi: Int, maxv: Float, mini: Int, minv: Float, dv: Float} {
+    public static function maxmin(w:Array<Float>):MaxMinValue {
 
-        if(w.length == 0) {
-            return null;
-        }
+        if (w == null || w.length == 0) return null;
 
         var maxv:Float = w[0];
         var minv:Float = w[0];
@@ -101,17 +100,14 @@ class Utils {
                 minv = w[i];
                 mini = i;
             }
-
-
-
         }
 
         return {
-            maxi: maxi,
-            maxv: maxv,
-            mini: mini,
-            minv: minv,
-            dv:maxv-minv
+            maxi : maxi,
+            maxv : maxv,
+            mini : mini,
+            minv : minv,
+            dv : maxv - minv
         };
     }
 

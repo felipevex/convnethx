@@ -1,0 +1,5 @@
+
+-lib utest
+-main tests.Main
+
+-neko convtests.n

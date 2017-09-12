@@ -24,7 +24,7 @@ class VolUtil {
             for (x in 0 ... crop) {
                 for (y in 0 ... crop) {
 
-                    if( x + dx < 0 || x + dx > = V.sx || y + dy < 0 || y + dy >= V.sy) continue; // oob
+                    if( x + dx < 0 || x + dx >= V.sx || y + dy < 0 || y + dy >= V.sy) continue; // oob
 
                     for(d in 0 ... V.depth) {
                         W.set(x, y, d, V.get(x + dx, y + dy, d)); // copy data over
