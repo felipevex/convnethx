@@ -1,5 +1,6 @@
 package tests;
 
+import tests.batches.VolTest;
 import tests.batches.UtilsTest;
 import utest.ui.Report;
 import utest.Runner;
@@ -10,6 +11,7 @@ class Main {
         var runner:Runner = new Runner();
 
         runner.addCase(new UtilsTest());
+        runner.addCase(new VolTest());
 
         Report.create(runner);
 

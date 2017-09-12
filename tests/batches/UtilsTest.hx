@@ -1,6 +1,6 @@
 package tests.batches;
 
-import convnethx.model.MaxMinValue;
+import convnethx.model.DefMaxMinValue;
 import utest.Assert;
 import convnethx.Utils;
 
@@ -11,7 +11,7 @@ class UtilsTest {
     }
 
     public function test_maxmin():Void {
-        var value:MaxMinValue = Utils.maxmin([-0.1, -1.2, 30, 5, 0.0001, 229.34]);
+        var value:DefMaxMinValue = Utils.maxmin([-0.1, -1.2, 30, 5, 0.0001, 229.34]);
 
         Assert.equals(229.34, value.maxv);
         Assert.equals(5, value.maxi);

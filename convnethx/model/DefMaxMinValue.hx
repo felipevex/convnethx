@@ -1,6 +1,6 @@
 package convnethx.model;
 
-typedef MaxMinValue = {
+typedef DefMaxMinValue = {
     var maxi: Int;      // max index
     var maxv: Float;    // max value
     var mini: Int;      // min index

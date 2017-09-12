@@ -1,6 +1,6 @@
 package convnethx;
 
-import convnethx.model.MaxMinValue;
+import convnethx.model.DefMaxMinValue;
 import haxe.io.Float64Array;
 
 class Utils {
@@ -65,20 +65,16 @@ class Utils {
         return result;
     }
 
-    public static function convertToFloatArray(values:Float64Array):Array<Float> {
+    inline public static function convertToFloatArray(values:Float64Array):Array<Float> {
         var result:Array<Float> = [];
-
-        for (i in 0 ... values.length) {
-            result.push(values[i]);
-        }
-
+        for (i in 0 ... values.length) result.push(values.get(i));
         return result;
     }
 
     /**
     * return max and min of a given non-empty array.
     **/
-    public static function maxmin(w:Array<Float>):MaxMinValue {
+    public static function maxmin(w:Array<Float>):DefMaxMinValue {
 
         if (w == null || w.length == 0) return null;
 

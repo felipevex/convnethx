@@ -1,5 +1,6 @@
 package convnethx;
 
+import convnethx.model.DefVolume;
 import convnethx.Utils;
 import haxe.io.Float64Array;
 
@@ -11,8 +12,8 @@ class Vol {
     * width (sx), height (sy), and depth (depth).
     * it is used to hold data for all filters, all volumes,
     * all weights, and also stores all gradients w.r.t.
-    * the data. c is optionally a value to initialize the volume
-    * with. If c is missing, fills the Vol with random numbers.
+    * the data. constantValue is optionally a value to initialize the volume
+    * with. If constantValue is missing, fills the Vol with random numbers.
     **/
 
     public var sx:Int;
@@ -23,118 +24,82 @@ class Vol {
     public var dw:Float64Array;
 
 
-    public function new(sx:Int, sy:Int, depth:Int, c:Array<Float> = null) {
+    public function new(?volumeValues:Array<Float>, ?sx:Int, ?sy:Int, ?depth:Int, ?constantValue:Float) {
+        if (volumeValues != null && volumeValues.length > 0) {
 
-        this.sx = sx;
-        this.sy = sy;
-        this.depth = depth;
+            this.sx = 1;
+            this.sy = 1;
+            this.depth = volumeValues.length;
 
-        var n:Int = this.sx * this.sy * this.depth;
+            this.w = Utils.zeros(this.depth);
+            this.dw = Utils.zeros(this.depth);
 
-        this.w = Utils.zeros(n);
-        this.dw = Utils.zeros(n);
-
-        if (c == null || c.length == 0) {
-            // weight normalization is done to equalize the output
-            // variance of every neuron, otherwise neurons with a lot
-            // of incoming connections have outputs of larger variance
-
-            var scale:Float = Math.sqrt(1 / (sx * sy * depth));
-
-            for (i in 0 ... n) this.w[i] = Utils.randn(0, scale);
+            for (i in 0 ... volumeValues.length) this.w.set(i, volumeValues[i]);
 
         } else {
-            if (c.length == n)
-                for (i in 0 ... n) this.w[i] = c[i];
-            else
-                for (i in 0 ... n) this.w[i] = c[0];
+
+            if (sx == null || sy == null) throw "You must input sx or sy value";
+
+            this.sx = sx;
+            this.sy = sy;
+            this.depth = depth;
+
+            var n:Int = this.sx * this.sy * this.depth;
+
+            this.w = Utils.zeros(n);
+            this.dw = Utils.zeros(n);
+
+            if (constantValue == null) {
+                // weight normalization is done to equalize the output
+                // variance of every neuron, otherwise neurons with a lot
+                // of incoming connections have outputs of larger variance
+
+                var scale:Float = Math.sqrt(1.0 / (sx * sy * depth));
+                for (i in 0 ... n) this.w.set(i, Utils.randn(0, scale));
+
+            } else {
+                for (i in 0 ... this.w.length) this.w.set(i, constantValue);
+
+            }
         }
     }
 
-    public static function generate1DVol(values:Array<Float>):Vol {
-        return new Vol(1, 1, values.length, values);
-    }
+    inline private function getIndex(x:Int, y:Int, depth:Int):Int return ((this.sx * y) + x) * this.depth + depth;
 
-    inline private function getIndex(x:Int, y:Int, d:Int):Int {
-        return ((this.sx * y) + x) * this.depth + d;
-    }
+    public function get(x:Int, y:Int, depth:Int):Float return this.w[this.getIndex(x, y, depth)];
+    public function set(x:Int, y:Int, depth:Int, value:Float):Void this.w[this.getIndex(x, y, depth)] = value;
+    public function add(x:Int, y:Int, depth:Int, value:Float):Void this.w[this.getIndex(x, y, depth)] += value;
 
-    public function get(x:Int, y:Int, d:Int):Float {
-        var index:Int = this.getIndex(x, y, d);
-        return this.w[index];
-    }
+    public function get_grad(x:Int, y:Int, depth:Int):Float return this.dw[this.getIndex(x, y, depth)];
+    public function set_grad(x:Int, y:Int, depth:Int, value:Float):Void this.dw[this.getIndex(x, y, depth)] = value;
+    public function add_grad(x:Int, y:Int, depth:Int, value:Float):Void this.dw[this.getIndex(x, y, depth)] += value;
 
-    public function set(x:Int, y:Int, d:Int, value:Float):Void {
-        var index:Int = this.getIndex(x, y, d);
-        this.w[index] = value;
-    }
-
-    public function add(x:Int, y:Int, d:Int, value:Float):Void {
-        var index:Int = this.getIndex(x, y, d);
-        this.w[index] += value;
-    }
-
-    public function get_grad(x:Int, y:Int, d:Int):Float {
-        var index:Int = this.getIndex(x, y, d);
-        return this.dw[index];
-    }
-
-    public function set_grad(x:Int, y:Int, d:Int, value:Float):Void {
-        var index:Int = this.getIndex(x, y, d);
-        this.w[index] = value;
-    }
-
-    public function add_grad(x:Int, y:Int, d:Int, value:Float):Void {
-        var index:Int = this.getIndex(x, y, d);
-        this.w[index] += value;
-    }
-
-    public function cloneAndZero():Vol {
-        return new Vol(this.sx, this.sy, this.depth, [0]);
-    }
+    public function cloneAndZero():Vol return new Vol(this.sx, this.sy, this.depth, 0);
 
     public function clone():Vol {
-        var values:Array<Float> = [];
-
-        for (i in 0 ... this.w.length) {
-            values.push(this.w.get(i));
-        }
-
-        return new Vol(this.sx, this.sy, this.depth, values);
+        var clone:Vol = new Vol(this.sx, this.sy, this.depth, 0);
+        for (i in 0 ... this.w.length) clone.w.set(i, this.w.get(i));
+        return clone;
     }
 
-    public function addFrom(vol:Vol):Void {
-        for (i in 0 ... this.w.length) {
-            this.w[i] += vol.w[i];
-        }
-    }
+    public function setConst(constValue:Float):Void for (i in 0 ... this.w.length) this.w[i] = constValue;
+    public function addFrom(vol:Vol):Void for (i in 0 ... this.w.length) this.w[i] += vol.w[i];
+    public function addFromScaled(vol:Vol, scale:Float):Void for (i in 0 ... this.w.length) this.w[i] += (scale * vol.w[i]);
 
-    public function addFromScaled(vol:Vol, a:Float):Void {
-        for (i in 0 ... this.w.length) {
-            this.w[i] += a * vol.w[i];
-        }
-    }
-
-    public function setConst(a:Float) {
-        for (i in 0 ... this.w.length) {
-            this.w[i] = a;
-        }
-    }
-
-    public function toJSON():Dynamic {
-        // todo: we may want to only save d most significant digits to save space
-
-        var json:Dynamic = {}
-        json.sx = this.sx;
-        json.sy = this.sy;
-        json.depth = this.depth;
-        json.w = Utils.convertToFloatArray(this.w);
+    // todo: we may want to only save d most significant digits to save space
+    public function toJSON():DefVolume {
+        var json:DefVolume = {
+            sx : this.sx,
+            sy : this.sy,
+            depth : this.depth,
+            w : Utils.convertToFloatArray(this.w)
+        };
 
         return json;
         // we wont back up gradients to save space
     }
 
-    public function fromJSON(json:Dynamic):Void {
+    public function fromJSON(json:DefVolume):Void {
         this.sx = json.sx;
         this.sy = json.sy;
         this.depth = json.depth;
