@@ -7,6 +7,7 @@ package convnethx;
 * dx,dy are offset wrt incoming volume, of the shift
 * fliplr is boolean on whether we also want to flip left<->right
 **/
+
 class VolUtil {
 
     public function augment(V:Vol, crop:Int, dx:Null<Float> = null, dy:Null<Float> = null, fliplr:Bool = false):Vol {
@@ -54,24 +55,59 @@ class VolUtil {
         return W;
     }
 
+    public static function imageToVol(width:Int, height:Int, RGBA:Array<Int>, ?convertToGrayscale:Bool = false):Vol {
+        if (width == 0 || height == 0 || width * height != Math.floor(RGBA.length/4)) throw "Wrong image size";
+
+        if (convertToGrayscale) {
+            var grayFloat:Array<Float> = [];
+
+            for (i in 0 ... (width * height)) {
+                // 0.21 R + 0.72 G + 0.07 B.
+                var r:Float = RGBA[i + 0] * 0.21;
+                var g:Float = RGBA[i + 1] * 0.72;
+                var b:Float = RGBA[i + 2] * 0.07;
+                var a:Float = RGBA[i + 3] / 255;
+
+                var g:Float = Math.floor((r + g + b) * a);
+
+                grayFloat.push(g / 255 - 0.5);
+            }
+
+            var vol:Vol = new Vol(width, height, 1, 0);
+            vol.w = Utils.convertToFloat64Array(grayFloat);
+
+            return vol;
+
+        } else {
+            // color volume
+            var colorFloat:Array<Float> = [for(value in RGBA) {value / 255 - 0.5}]; // normalize image pixels to [-0.5, 0.5]
+
+            var vol:Vol = new Vol(width, height, 4, 0);
+            vol.w = Utils.convertToFloat64Array(colorFloat);
+
+            return vol;
+        }
+
+    }
+
+
     #if js
 
     /**
     * img is a DOM element that contains a loaded image
     * returns a Vol of size (W, H, 4). 4 is for RGBA
     **/
-    public static function img_to_vol(img:js.html.Image, convert_grayscale:Bool = false):Vol {
-
+    public static function img_to_vol(img:js.html.Image, convertToGrayscale:Bool = false):Vol {
         var canvas:js.html.CanvasElement = js.Browser.document.createCanvasElement();
         canvas.width = img.width;
         canvas.height = img.height;
 
-        var ctx:Dynamic = canvas.getContext("2d");
+        var ctx:js.html.CanvasRenderingContext2D = canvas.getContext2d();
 
         // due to a Firefox bug
         try {
             ctx.drawImage(img, 0, 0);
-        } catch (e) {
+        } catch (e:Dynamic) {
             if (e.name == "NS_ERROR_NOT_AVAILABLE") {
 
                 // sometimes happens, lets just abort
@@ -82,13 +118,11 @@ class VolUtil {
             }
         }
 
-        var img_data:Dynamic = null;
+        var img_data:js.html.ImageData = null;
 
         try {
             img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
         } catch (e) {
-
             if(e.name == 'IndexSizeError') {
                 return null; // not sure what causes this sometimes but okay abort
             } else {
@@ -97,34 +131,9 @@ class VolUtil {
         }
 
         // prepare the input: get pixels and normalize them
-        var p = img_data.data;
-        var W:Int = img.width;
-        var H:Int = img.height;
+        var data:Array<Int> = [for (value in img_data.data) {value}];
 
-        var pv:Array<Float> = []
-
-        for(i in 0 ... p.length) {
-            pv.push(p[i] / 255 - 0.5); // normalize image pixels to [-0.5, 0.5]
-        }
-
-        var x:Vol = new Vol(W, H, 4, 0); //input volume (image)
-        x.w = pv;
-
-        if (convert_grayscale) {
-
-            // flatten into depth=1 array
-            var x1:Vol = new Vol(W, H, 1, 0.0);
-
-               for(i in 0 ... W) {
-                   for(j in 0 ... H) {
-                       x1.set(i, j, 0, x.get(i, j, 0));
-                   }
-               }
-
-            x = x1;
-        }
-
-        return x;
+        return imageToVol(img.width, img.height, data, convertToGrayscale);
     }
     #end
 
