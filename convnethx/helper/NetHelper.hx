@@ -1,5 +1,7 @@
 package convnethx.helper;
 
+import convnethx.layer.nonlinearities.LayerTanh;
+import convnethx.layer.input.LayerInput;
 import convnethx.layer.dotproduct.LayerFullyConn;
 import convnethx.type.LayerType;
 import convnethx.layer.model.LayerOption;
@@ -25,12 +27,13 @@ class NetHelper {
             var currentLayer:Layer = switch(option.layer_type) {
                 case LayerType.INPUT : new LayerInput(option);
                 case LayerType.FC : new LayerFullyConn(option);
+                case LayerType.TANH : new LayerTanh(option);
                 case _ : null;
             }
 
+
             if (currentLayer != null) {
                 result.push(currentLayer);
-
                 prevLayer = currentLayer;
             }
         }
@@ -114,7 +117,6 @@ class NetHelper {
                 result.push(LayerOptionHelper.createDropOut(option.drop_prob));
             }
         }
-
 
         return result;
     }

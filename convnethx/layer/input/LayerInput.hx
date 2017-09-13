@@ -1,4 +1,4 @@
-package convnethx;
+package convnethx.layer.input;
 
 import convnethx.model.json.JsonLayerInput;
 import convnethx.layer.model.LayerOption;

@@ -1,20 +1,25 @@
-package convnethx;
-
+package convnethx.layer.nonlinearities;
 
 /**
 * Implements Tanh nnonlinearity
 * elementwise x -> tanh(x)
 * so the output is between -1 and 1.
 **/
+import convnethx.model.json.JsonLayerTanh;
+import convnethx.type.LayerType;
+import convnethx.layer.model.LayerOption;
+
 class LayerTanh extends Layer {
 
-    public function new(opt:Opt) {
-        super(opt);
+    public function new(option:LayerOption) {
+        super();
+
+        if (option.in_sx == null || option.in_sy == null || option.in_depth == null) throw "Missing arguments for Tanh Layer";
 
         // computed
-        this.out_sx = opt.in_sx;
-        this.out_sy = opt.in_sy;
-        this.out_depth = opt.in_depth;
+        this.out_sx = option.in_sx;
+        this.out_sy = option.in_sy;
+        this.out_depth = option.in_depth;
         this.layer_type = LayerType.TANH;
     }
 
@@ -46,16 +51,18 @@ class LayerTanh extends Layer {
         return null;
     }
 
-    override public function toJSON():Dynamic {
-        var json:Dynamic = {};
-        json.out_depth = this.out_depth;
-        json.out_sx = this.out_sx;
-        json.out_sy = this.out_sy;
-        json.layer_type = this.layer_type;
+    public function toJSON():JsonLayerTanh {
+        var json:JsonLayerTanh = {
+            layer_type : this.layer_type,
+            out_depth : this.out_depth,
+            out_sx : this.out_sx,
+            out_sy : this.out_sy
+        };
+
         return json;
     }
 
-    override public function fromJSON(json:Dynamic):Void {
+    public function fromJSON(json:JsonLayerTanh):Void {
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;

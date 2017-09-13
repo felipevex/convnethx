@@ -1,7 +1,7 @@
 package tests.batches;
 
+import convnethx.layer.input.LayerInput;
 import convnethx.helper.LayerOptionHelper;
-import convnethx.LayerInput;
 import utest.Assert;
 
 class LayerInputTest {

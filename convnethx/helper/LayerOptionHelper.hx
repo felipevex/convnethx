@@ -44,9 +44,12 @@ class LayerOptionHelper {
         }
     }
 
-    public inline static function createTANH():LayerOption {
+    public inline static function createTANH(?in_sx:Null<Int> = null, ?in_sy:Null<Int> = null, ?in_depth:Null<Int> = null):LayerOption {
         return {
-            layer_type : LayerType.TANH
+            layer_type : LayerType.TANH,
+            in_depth : in_depth,
+            in_sx : in_sx,
+            in_sy : in_sy
         }
     }
 
