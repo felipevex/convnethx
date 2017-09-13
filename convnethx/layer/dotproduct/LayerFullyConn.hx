@@ -1,5 +1,6 @@
-package convnethx;
+package convnethx.layer.dotproduct;
 
+import convnethx.model.ParamsAndGradsValue;
 import convnethx.model.json.JsonLayerFC;
 import convnethx.type.LayerType;
 import convnethx.layer.model.LayerOption;
@@ -27,22 +28,16 @@ class LayerFullyConn extends Layer {
         this.layer_type = LayerType.FC;
 
         // initializations
+        this.filters = [for(i in 0 ... this.out_depth) new Vol(1, 1, this.num_inputs)];
+
         var bias:Float = option.bias_pref != null ? option.bias_pref : 0.0;
-        this.filters = [];
-
-        for(i in 0 ... this.out_depth) {
-            this.filters.push(
-                new Vol(1, 1, this.num_inputs)
-            );
-        }
-
-        this.biases = new Vol(1, 1, this.out_depth, [bias]);
+        this.biases = new Vol(1, 1, this.out_depth, bias);
     }
 
     override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
-        var A:Vol = new Vol(1, 1, this.out_depth, [0.0]);
+        var A:Vol = new Vol(1, 1, this.out_depth, 0);
         var Vw:Float64Array = V.w;
 
         for (i in 0 ... this.out_depth) {
@@ -82,8 +77,8 @@ class LayerFullyConn extends Layer {
         return null;
     }
 
-    override public function getParamsAndGrads():Array<Dynamic> {
-        var response:Array<Dynamic> = [];
+    override public function getParamsAndGrads():Array<ParamsAndGradsValue> {
+        var response:Array<ParamsAndGradsValue> = [];
 
         for (i in 0 ... this.out_depth) {
             response.push(
@@ -141,13 +136,13 @@ class LayerFullyConn extends Layer {
         this.filters = [];
 
         for(i in 0 ... json.filters.length) {
-            var v = new Vol(0, 0, 0, [0]);
+            var v = new Vol(0, 0, 0, 0);
             v.fromJSON(json.filters[i]);
 
             this.filters.push(v);
         }
 
-        this.biases = new Vol(0,0,0,[0]);
+        this.biases = new Vol(0, 0, 0, 0);
         this.biases.fromJSON(json.biases);
     }
 }

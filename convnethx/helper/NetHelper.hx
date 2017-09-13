@@ -1,5 +1,6 @@
 package convnethx.helper;
 
+import convnethx.layer.dotproduct.LayerFullyConn;
 import convnethx.type.LayerType;
 import convnethx.layer.model.LayerOption;
 

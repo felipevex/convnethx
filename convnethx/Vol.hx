@@ -24,7 +24,7 @@ class Vol {
     public var dw:Float64Array;
 
 
-    public function new(?sx:Int, ?sy:Int, ?depth:Int, ?constantValue:Null<Float>, ?volumeValues:Array<Float> = null) {
+    public function new(?volumeValues:Array<Float> = null, ?sx:Int, ?sy:Int, ?depth:Int, ?constantValue:Null<Float>) {
         if (volumeValues != null && volumeValues.length > 0) {
 
             this.sx = 1;

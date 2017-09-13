@@ -1,6 +1,6 @@
 package tests.batches;
 
-import convnethx.LayerFullyConn;
+import convnethx.layer.dotproduct.LayerFullyConn;
 import convnethx.type.LayerType;
 import convnethx.LayerInput;
 import convnethx.helper.NetHelper;
@@ -40,7 +40,7 @@ class NetTest {
         ];
 
         var layers:Array<Layer> = NetHelper.createLayers(layerOptions);
-        
+
         Assert.equals(7, layerOptions.length);
         Assert.is(layers[0], LayerInput);
         Assert.is(layers[1], LayerFullyConn);
