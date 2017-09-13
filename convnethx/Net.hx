@@ -5,6 +5,10 @@ package convnethx;
 * constraints: Simple linear order
 * of layers, first layer input last layer a cost layer
 **/
+import convnethx.layer.dotproduct.LayerFullyConn;
+import convnethx.layer.loss.LayerSoftmax;
+import convnethx.layer.nonlinearities.LayerTanh;
+import convnethx.layer.input.LayerInput;
 import convnethx.helper.NetHelper;
 import convnethx.type.LayerType;
 import convnethx.Utils;
@@ -23,104 +27,8 @@ class Net {
         Utils.assert(defs.length >= 2, 'Error! At least one input layer and one loss layer are required.');
         Utils.assert(defs[0].type == LayerType.INPUT, 'Error! First layer must be the input layer, to declare size of inputs');
 
-        defs = this.desugar(defs);
-
         // create the layers
         this.layers = NetHelper.createLayers(defs);
-    }
-
-    private function desugar(defs:Array<Opt>):Array<Opt> {
-
-        var new_defs:Array<Opt> = [];
-
-        for(i in 0 ... defs.length) {
-
-            var def:Opt = defs[i];
-
-            if (def.type == LayerType.SOFTMAX || def.type == LayerType.SVM) {
-                // add an fc layer here, there is no reason the user should
-                // have to worry about this and we almost always want to
-
-                new_defs.push(
-                    {
-                        type : LayerType.FC,
-                        num_neurons: def.num_classes
-                    }
-                );
-            }
-
-
-            if (def.type == LayerType.REGRESSION) {
-                // add an fc layer here, there is no reason the user should
-                // have to worry about this and we almost always want to
-
-                new_defs.push(
-                    {
-                        type : LayerType.FC,
-                        num_neurons: def.num_neurons
-                    }
-                );
-            }
-
-            if ((def.type == LayerType.FC || def.type == LayerType.CONV) && def.bias_pref == null) {
-                def.bias_pref = 0.0;
-
-                if (def.activation != null && def.activation == LayerType.RELU) {
-                    def.bias_pref = 0.1; // relus like a bit of positive bias to get gradients early
-                    // otherwise it's technically possible that a relu unit will never turn on (by chance)
-                    // and will never get any gradient and never contribute any computation. Dead relu.
-                }
-            }
-
-            new_defs.push(def);
-
-            if (def.activation != null) {
-
-                if (def.activation == LayerType.RELU) {
-                    new_defs.push(
-                        {
-                            type : LayerType.RELU
-                        }
-                    );
-                } else if (def.activation == LayerType.SIGMOID) {
-                    new_defs.push(
-                        {
-                            type: LayerType.SIGMOID
-                        }
-                    );
-                } else if (def.activation == LayerType.TANH) {
-                    new_defs.push(
-                        {
-                            type:LayerType.TANH
-                        }
-                    );
-                } else if (def.activation == LayerType.MAXOUT) {
-                    // create maxout activation, and pass along group size, if provided
-
-                    var gs:Int = def.group_size != null ? def.group_size : 2;
-                    new_defs.push(
-                        {
-                            type : LayerType.MAXOUT,
-                            group_size : gs
-                        }
-                    );
-                } else {
-                    trace('ERROR unsupported activation ${def.activation}');
-                }
-            }
-
-            if (def.drop_prob != null && def.type != LayerType.DROPOUT) {
-                new_defs.push(
-                    {
-                        type : LayerType.DROPOUT,
-                        drop_prob : def.drop_prob
-                    }
-                );
-            }
-
-        }
-
-        return new_defs;
     }
 
     // forward prop the network.

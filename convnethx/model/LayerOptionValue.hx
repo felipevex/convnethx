@@ -1,8 +1,8 @@
-package convnethx.layer.model;
+package convnethx.model;
 
 import convnethx.type.LayerType;
 
-typedef LayerOption = {
+typedef LayerOptionValue = {
     @:optional var layer_type:LayerType;
     @:optional var activation:LayerType;
 

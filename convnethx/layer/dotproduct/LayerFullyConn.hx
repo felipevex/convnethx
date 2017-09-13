@@ -3,34 +3,36 @@ package convnethx.layer.dotproduct;
 import convnethx.model.ParamsAndGradsValue;
 import convnethx.model.json.JsonLayerFC;
 import convnethx.type.LayerType;
-import convnethx.layer.model.LayerOption;
+import convnethx.model.LayerOptionValue;
 import haxe.io.Float64Array;
 
 class LayerFullyConn extends Layer {
 
-    public function new(option:LayerOption) {
+    public function new(option:LayerOptionValue) {
         super();
+        this.layer_type = LayerType.FC;
 
-        // required
-        // ok fine we will allow 'filters' as the word as well
         // todo must allow filter words??
         // this.out_depth = opt.num_neurons != null ? opt.num_neurons : opt.filters;
-        this.out_depth = option.num_neurons;
+        this.out_depth = option.num_neurons == null ? 1 : option.num_neurons;
 
         // optional
         this.l1_decay_mul = option.l1_decay_mul != null ? option.l1_decay_mul : 0.0;
         this.l2_decay_mul = option.l2_decay_mul != null ? option.l2_decay_mul : 1.0;
 
+        var in_sx:Int = option.in_sx == null ? 0 : option.in_sx;
+        var in_sy:Int = option.in_sy == null ? 0 : option.in_sy;
+        var in_depth:Int = option.in_depth == null ? 0 : option.in_depth;
+
         // computed
-        this.num_inputs = option.in_sx * option.in_sy * option.in_depth;
+        this.num_inputs = in_sx * in_sy * in_depth;
         this.out_sx = 1;
         this.out_sy = 1;
-        this.layer_type = LayerType.FC;
 
         // initializations
         this.filters = [for(i in 0 ... this.out_depth) new Vol(1, 1, this.num_inputs)];
 
-        var bias:Float = option.bias_pref != null ? option.bias_pref : 0.0;
+        var bias:Float = option.bias_pref != null ? option.bias_pref : 0;
         this.biases = new Vol(1, 1, this.out_depth, bias);
     }
 
@@ -128,7 +130,6 @@ class LayerFullyConn extends Layer {
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;
-        this.layer_type = json.layer_type;
         this.num_inputs = json.num_inputs;
         this.l1_decay_mul = json.l1_decay_mul != null ? json.l1_decay_mul : 1.0;
         this.l2_decay_mul = json.l2_decay_mul != null ? json.l2_decay_mul : 1.0;
@@ -136,10 +137,10 @@ class LayerFullyConn extends Layer {
         this.filters = [];
 
         for(i in 0 ... json.filters.length) {
-            var v = new Vol(0, 0, 0, 0);
-            v.fromJSON(json.filters[i]);
+            var volume = new Vol(0, 0, 0, 0);
+            volume.fromJSON(json.filters[i]);
 
-            this.filters.push(v);
+            this.filters.push(volume);
         }
 
         this.biases = new Vol(0, 0, 0, 0);

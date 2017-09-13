@@ -1,27 +1,33 @@
-package convnethx;
+package convnethx.layer.loss;
 
+import convnethx.model.json.JsonLayerSoftmax;
+import convnethx.type.LayerType;
+import convnethx.model.LayerOptionValue;
 import haxe.io.Float64Array;
 
 class LayerSoftmax extends Layer {
 
     public var es:Float64Array;
 
-    public function new(opt:Opt) {
-        super(opt);
+    public function new(option:LayerOptionValue) {
+        super();
+        this.layer_type = LayerType.SOFTMAX;
+
+        var in_sx:Int = option.in_sx == null ? 0 : option.in_sx;
+        var in_sy:Int = option.in_sy == null ? 0 : option.in_sy;
+        var in_depth:Int = option.in_depth == null ? 0 : option.in_depth;
 
         // computed
-        this.num_inputs = opt.in_sx * opt.in_sy * opt.in_depth;
+        this.num_inputs = in_sx * in_sy * in_depth;
         this.out_depth = this.num_inputs;
         this.out_sx = 1;
         this.out_sy = 1;
-
-        this.layer_type = LayerType.SOFTMAX;
     }
 
     override public function forward(V:Vol, is_training:Bool = false):Vol {
         this.in_act = V;
 
-        var A:Vol = new Vol(1, 1, this.out_depth, [0]);
+        var A:Vol = new Vol(1, 1, this.out_depth, 0);
 
         // compute max activation
         var as:Float64Array = V.w;
@@ -71,23 +77,22 @@ class LayerSoftmax extends Layer {
         return - Math.log(this.es[yValue]);
     }
 
-    override public function toJSON():Dynamic {
-        var json:Dynamic = {};
-
-        json.out_depth = this.out_depth;
-        json.out_sx = this.out_sx;
-        json.out_sy = this.out_sy;
-        json.layer_type = this.layer_type;
-        json.num_inputs = this.num_inputs;
+    public function toJSON():JsonLayerSoftmax {
+        var json:JsonLayerSoftmax = {
+            layer_type : this.layer_type,
+            out_depth : this.out_depth,
+            out_sx : this.out_sx,
+            out_sy : this.out_sy,
+            num_inputs : this.num_inputs
+        };
 
         return json;
     }
 
-    override public function fromJSON(json:Dynamic) {
+    public function fromJSON(json:JsonLayerSoftmax) {
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;
-        this.layer_type = json.layer_type;
         this.num_inputs = json.num_inputs;
     }
 }

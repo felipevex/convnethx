@@ -1,19 +1,18 @@
 package convnethx.layer.input;
 
 import convnethx.model.json.JsonLayerInput;
-import convnethx.layer.model.LayerOption;
+import convnethx.model.LayerOptionValue;
 import convnethx.type.LayerType;
 
 class LayerInput extends Layer {
 
-    public function new(option:LayerOption) {
+    public function new(option:LayerOptionValue) {
         super();
+        this.layer_type = LayerType.INPUT;
 
         this.out_depth = option.out_depth == null ? 0 : option.out_depth;
         this.out_sx = option.out_sx == null ? 1 : option.out_sx;
         this.out_sy = option.out_sy == null ? 1 : option.out_sy;
-
-        this.layer_type = LayerType.INPUT;
     }
 
     override public function forward(V:Vol, is_training:Bool = false):Vol {
@@ -35,7 +34,6 @@ class LayerInput extends Layer {
     }
 
     public function fromJSON(json:JsonLayerInput):Void {
-        this.layer_type = json.layer_type;
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;

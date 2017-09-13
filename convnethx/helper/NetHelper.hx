@@ -1,14 +1,15 @@
 package convnethx.helper;
 
+import convnethx.layer.loss.LayerSoftmax;
 import convnethx.layer.nonlinearities.LayerTanh;
 import convnethx.layer.input.LayerInput;
 import convnethx.layer.dotproduct.LayerFullyConn;
 import convnethx.type.LayerType;
-import convnethx.layer.model.LayerOption;
+import convnethx.model.LayerOptionValue;
 
 class NetHelper {
 
-    public static function createLayers(options:Array<LayerOption>):Array<Layer> {
+    public static function createLayers(options:Array<LayerOptionValue>):Array<Layer> {
 
         var result:Array<Layer> = [];
 
@@ -28,6 +29,7 @@ class NetHelper {
                 case LayerType.INPUT : new LayerInput(option);
                 case LayerType.FC : new LayerFullyConn(option);
                 case LayerType.TANH : new LayerTanh(option);
+                case LayerType.SOFTMAX : new LayerSoftmax(option);
                 case _ : null;
             }
 
@@ -41,9 +43,9 @@ class NetHelper {
         return result;
     }
 
-    private static function desugar(options:Array<LayerOption>):Array<LayerOption> {
+    private static function desugar(options:Array<LayerOptionValue>):Array<LayerOptionValue> {
 
-        var result:Array<LayerOption> = [];
+        var result:Array<LayerOptionValue> = [];
 
         for (option in options) {
 

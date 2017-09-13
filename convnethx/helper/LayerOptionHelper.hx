@@ -1,11 +1,11 @@
 package convnethx.helper;
 
-import convnethx.layer.model.LayerOption;
+import convnethx.model.LayerOptionValue;
 import convnethx.type.LayerType;
 
 class LayerOptionHelper {
 
-    public inline static function createInput(width:Int, height:Int, depth:Int):LayerOption {
+    public inline static function createInput(width:Int, height:Int, depth:Int):LayerOptionValue {
         return {
             layer_type : LayerType.INPUT,
             out_sx : width,
@@ -14,7 +14,7 @@ class LayerOptionHelper {
         }
     }
 
-    public inline static function createFC(numNeurons:Int, activation:LayerType = null, bias_pref:Null<Float> = null, l1_decay_mul:Null<Float> = null, l2_decay_mul:Null<Float> = null):LayerOption {
+    public inline static function createFC(numNeurons:Int, activation:LayerType = null, bias_pref:Null<Float> = null, l1_decay_mul:Null<Float> = null, l2_decay_mul:Null<Float> = null):LayerOptionValue {
         return {
             layer_type : LayerType.FC,
             activation : activation,
@@ -25,26 +25,37 @@ class LayerOptionHelper {
         }
     }
 
-    public inline static function createRelu():LayerOption {
+    public inline static function createRelu():LayerOptionValue {
         return {
             layer_type : LayerType.RELU
         }
     }
 
-    public inline static function createSigmoid():LayerOption {
+    public inline static function createSigmoid():LayerOptionValue {
         return {
             layer_type : LayerType.SIGMOID
         }
     }
 
-    public inline static function createSoftMax(numClasses:Int):LayerOption {
+    public inline static function createSoftmax(numClasses:Int, ?in_sx:Null<Int> = null, ?in_sy:Null<Int> = null, ?in_depth:Null<Int> = null):LayerOptionValue {
         return {
             layer_type : LayerType.SOFTMAX,
+            num_classes : numClasses,
+
+            in_depth : in_depth,
+            in_sx : in_sx,
+            in_sy : in_sy
+        }
+    }
+
+    public inline static function createSVM(numClasses:Int):LayerOptionValue {
+        return {
+            layer_type : LayerType.SVM,
             num_classes : numClasses
         }
     }
 
-    public inline static function createTANH(?in_sx:Null<Int> = null, ?in_sy:Null<Int> = null, ?in_depth:Null<Int> = null):LayerOption {
+    public inline static function createTANH(?in_sx:Null<Int> = null, ?in_sy:Null<Int> = null, ?in_depth:Null<Int> = null):LayerOptionValue {
         return {
             layer_type : LayerType.TANH,
             in_depth : in_depth,
@@ -53,13 +64,13 @@ class LayerOptionHelper {
         }
     }
 
-    public inline static function createMaxOut(groupSize:Int):LayerOption {
+    public inline static function createMaxOut(groupSize:Int):LayerOptionValue {
         return {
             layer_type : LayerType.MAXOUT
         }
     }
 
-    public inline static function createDropOut(dropProb:Float):LayerOption {
+    public inline static function createDropOut(dropProb:Float):LayerOptionValue {
         return {
             layer_type : LayerType.DROPOUT,
             drop_prob : dropProb

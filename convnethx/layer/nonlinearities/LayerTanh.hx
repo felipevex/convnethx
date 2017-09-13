@@ -7,20 +7,18 @@ package convnethx.layer.nonlinearities;
 **/
 import convnethx.model.json.JsonLayerTanh;
 import convnethx.type.LayerType;
-import convnethx.layer.model.LayerOption;
+import convnethx.model.LayerOptionValue;
 
 class LayerTanh extends Layer {
 
-    public function new(option:LayerOption) {
+    public function new(option:LayerOptionValue) {
         super();
-
-        if (option.in_sx == null || option.in_sy == null || option.in_depth == null) throw "Missing arguments for Tanh Layer";
+        this.layer_type = LayerType.TANH;
 
         // computed
-        this.out_sx = option.in_sx;
-        this.out_sy = option.in_sy;
-        this.out_depth = option.in_depth;
-        this.layer_type = LayerType.TANH;
+        this.out_sx = option.in_sx == null ? 0 : option.in_sx;
+        this.out_sy = option.in_sy == null ? 0 : option.in_sy;
+        this.out_depth = option.in_depth == null ? 0 : option.in_depth;
     }
 
     override public function forward(V:Vol, is_training:Bool = false):Vol {
@@ -66,6 +64,5 @@ class LayerTanh extends Layer {
         this.out_depth = json.out_depth;
         this.out_sx = json.out_sx;
         this.out_sy = json.out_sy;
-        this.layer_type = json.layer_type;
     }
 }
