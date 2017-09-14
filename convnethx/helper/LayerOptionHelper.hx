@@ -66,7 +66,8 @@ class LayerOptionHelper {
 
     public inline static function createMaxOut(groupSize:Int):LayerOptionValue {
         return {
-            layer_type : LayerType.MAXOUT
+            layer_type : LayerType.MAXOUT,
+            group_size : groupSize
         }
     }
 

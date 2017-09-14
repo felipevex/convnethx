@@ -5,6 +5,8 @@ package convnethx;
 * constraints: Simple linear order
 * of layers, first layer input last layer a cost layer
 **/
+import convnethx.model.ParamsAndGradsValue;
+import convnethx.model.LayerOptionValue;
 import convnethx.layer.dotproduct.LayerFullyConn;
 import convnethx.layer.loss.LayerSoftmax;
 import convnethx.layer.nonlinearities.LayerTanh;
@@ -22,10 +24,10 @@ class Net {
         this.layers = [];
     }
 
-    public function makeLayers(defs:Array<Opt>):Void {
+    public function makeLayers(defs:Array<LayerOptionValue>):Void {
         // few checks
         Utils.assert(defs.length >= 2, 'Error! At least one input layer and one loss layer are required.');
-        Utils.assert(defs[0].type == LayerType.INPUT, 'Error! First layer must be the input layer, to declare size of inputs');
+        Utils.assert(defs[0].layer_type == LayerType.INPUT, 'Error! First layer must be the input layer, to declare size of inputs');
 
         // create the layers
         this.layers = NetHelper.createLayers(defs);
@@ -45,37 +47,34 @@ class Net {
         return act;
     }
 
-    public function getCostLoss(V:Vol, y:Array<Float> = null):Null<Float> {
+    public function getCostLoss(V:Vol, y:Int):Null<Float> {
         this.forward(V, false);
 
         var N:Int = this.layers.length;
-        var loss:Null<Float> = this.layers[N-1].backward(y);
+        var loss:Float = this.layers[N-1].backward(y);
 
         return loss;
     }
 
-    public function backward(y:Array<Float>):Null<Float> {
+    public function backward(y:Null<Int>):Null<Float> {
         var N:Int = this.layers.length;
 
-        var loss:Null<Float> = this.layers[N-1].backward(y); // last layer assumed to be loss layer
+        var layerList:Array<Layer> = this.layers.copy();
+        layerList.reverse();
 
-        var i:Int = N-2;
+        var loss:Float = layerList[0].backward(y);
 
-        while (i >= 0) {
-            this.layers[i].backward();
-
-            i--;
-        }
+        for (i in 1 ... layerList.length) layerList[i].backward();
 
         return loss;
     }
 
-    public function getParamsAndGrads():Array<Dynamic> {
+    public function getParamsAndGrads():Array<ParamsAndGradsValue> {
         // accumulate parameters and gradients for the entire network
-        var response:Array<Dynamic> = [];
+        var response:Array<ParamsAndGradsValue> = [];
 
         for (i in 0 ... this.layers.length) {
-            var layer_reponse:Array<Dynamic> = this.layers[i].getParamsAndGrads();
+            var layer_reponse:Array<ParamsAndGradsValue> = this.layers[i].getParamsAndGrads();
 
             for (j in 0 ... layer_reponse.length) {
                 response.push(layer_reponse[j]);
@@ -112,7 +111,7 @@ class Net {
         };
 
         for(i in 0 ... this.layers.length) {
-            json.layers.push(this.layers[i].toJSON());
+//            json.layers.push(this.layers[i].toJSON());
         }
 
         return json;
@@ -121,29 +120,30 @@ class Net {
     public function fromJSON(json:Dynamic):Void {
         this.layers = [];
 
-        for(i in 0 ... json.layers.length) {
+        for (i in 0 ... json.layers.length) {
             var Lj:Dynamic = json.layers[i];
             var t:String = Lj.layer_type;
             var L:Layer;
 
             if(t == LayerType.INPUT) L = new LayerInput({});
-            else if(t == LayerType.RELU) L = new LayerRelu({});
-            else if(t == LayerType.SIGMOID) L = new LayerSigmoid({});
             else if(t == LayerType.TANH) L = new LayerTanh({});
-            else if(t == LayerType.DROPOUT) L = new LayerDropout({});
-            else if(t == LayerType.CONV) L = new LayerConv({});
-            else if(t == LayerType.POOL) L = new LayerPool({});
-            else if(t == LayerType.LRN) L = new LayerLocalResponseNormalization({});
             else if(t == LayerType.SOFTMAX) L = new LayerSoftmax({});
-            else if(t == LayerType.REGRESSION) L = new LayerRegression({});
             else if(t == LayerType.FC) L = new LayerFullyConn({});
-            else if(t == LayerType.MAXOUT) L = new LayerMaxout({});
-            else if(t == LayerType.SVM) L = new LayerSVM({});
-            else L = new Layer({});
+//            else if(t == LayerType.RELU) L = new LayerRelu({});
+//            else if(t == LayerType.SIGMOID) L = new LayerSigmoid({});
+//            else if(t == LayerType.DROPOUT) L = new LayerDropout({});
+//            else if(t == LayerType.CONV) L = new LayerConv({});
+//            else if(t == LayerType.POOL) L = new LayerPool({});
+//            else if(t == LayerType.LRN) L = new LayerLocalResponseNormalization({});
+//            else if(t == LayerType.REGRESSION) L = new LayerRegression({});
+//            else if(t == LayerType.MAXOUT) L = new LayerMaxout({});
+//            else if(t == LayerType.SVM) L = new LayerSVM({});
+//            else L = new Layer({});
 
-            L.fromJSON(Lj);
+//            L.fromJSON(Lj);
 
-            this.layers.push(L);
+//            this.layers.push(L);
         }
+
     }
 }

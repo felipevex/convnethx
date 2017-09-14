@@ -35,7 +35,7 @@ class LayerTanh extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Null<Float> {
+    override public function backward(y:Null<Int> = null):Null<Float> {
         var V:Vol = this.in_act; // we need to set dw of this
         var V2:Vol = this.out_act;
         var N:Int = V.w.length;

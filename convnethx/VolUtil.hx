@@ -35,14 +35,14 @@ class VolUtil {
                         y + offsetY >= baseVolume.sy
                     ) continue;
 
-                    for(d in 0 ... baseVolume.depth) {
+                    for (d in 0 ... baseVolume.depth) {
                         croppedVolume.set(x, y, d, baseVolume.get(x + offsetX, y + offsetY, d)); // copy data over
                     }
                 }
             }
         } else {
             // todo must be clonned???
-            croppedVolume = baseVolume.clone();
+            croppedVolume = baseVolume;
         }
 
         if (flipHorizontal) {

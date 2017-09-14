@@ -1,5 +1,6 @@
 package convnethx;
 
+import convnethx.model.ParamsAndGradsValue;
 import convnethx.type.LayerType;
 
 class Layer {
@@ -39,11 +40,11 @@ class Layer {
         return V; // simply identity function for now
     }
 
-    public function backward(y:Array<Float> = null):Null<Float> {
+    public function backward(y:Null<Int> = null):Null<Float> {
         return null;
     }
 
-    public function getParamsAndGrads():Array<Dynamic> {
+    public function getParamsAndGrads():Array<ParamsAndGradsValue> {
         return [];
     }
 

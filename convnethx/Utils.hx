@@ -19,7 +19,7 @@ class Utils {
         var v:Float = 2 * Math.random() - 1;
         var r:Float = u * u + v * v;
 
-        if(r == 0 || r > 1) return gaussRandom();
+        if (r == 0 || r > 1) return gaussRandom();
 
         var c:Float = Math.sqrt(-2 * Math.log(r) / r);
 
@@ -30,39 +30,41 @@ class Utils {
     }
 
 
-    inline public static function randf(a:Float, b:Float):Float {
+    public inline static function randf(a:Float, b:Float):Float {
+        #if convdebug
+        return a;
+        #else
         return Math.random() * (b - a) + a;
+        #end
     }
 
-    inline public static function randi(a:Int, b:Int):Int {
+    public inline static function randi(a:Int, b:Int):Int {
         return Math.floor(Math.random() * (b - a) + a);
     }
 
-    inline public static function randn(mu:Float, std:Float):Float{
+    public inline static function randn(mu:Float, std:Float):Float{
+        #if convdebug
+        return mu;
+        #else
         return mu + gaussRandom() * std;
+        #end
     }
 
     /**
     * Array utilities
     **/
-    public static function zeros(n:Int):Float64Array {
+    public inline static function zeros(n:Int):Float64Array {
         return new Float64Array(n);
     }
 
     // a helper function, since tanh is not yet part of ECMAScript. Will be in v6.
-    inline public static function tanh(x:Float):Float {
+    public inline static function tanh(x:Float):Float {
         var y:Float = Math.exp(2 * x);
         return (y - 1) / (y + 1);
     }
 
-    public static function convertToFloat64Array(values:Array<Float>):Float64Array {
-        var result:Float64Array = zeros(values.length);
-
-        for (i in 0 ... values.length) {
-            result[i] = values[i];
-        }
-
-        return result;
+    public inline static function convertToFloat64Array(values:Array<Float>):Float64Array {
+        return Float64Array.fromArray(values);
     }
 
     inline public static function convertToFloatArray(values:Float64Array):Array<Float> {
@@ -111,6 +113,10 @@ class Utils {
     * create random permutation of numbers, in range [0...n-1]
     **/
     public static function randperm(n:Int):Array<Int> {
+        #if convdebug
+        return [for (i in 0 ... n) i];
+        #end
+
         var i:Int = n;
         var j:Int = 0;
         var temp:Int;
@@ -119,14 +125,12 @@ class Utils {
 
         for (q in 0 ... n) array.push(q);
 
-        while (i >= 0) {
+        while (i-- > 0) {
             j = Math.floor(Math.random() * (i + 1));
 
             temp = array[i];
             array[i] = array[j];
             array[j] = temp;
-
-            i--;
         }
 
         return array;

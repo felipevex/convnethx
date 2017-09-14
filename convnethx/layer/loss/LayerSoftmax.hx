@@ -33,15 +33,13 @@ class LayerSoftmax extends Layer {
         var as:Float64Array = V.w;
         var amax:Float = V.w[0];
 
-        for(i in 1 ... this.out_depth) {
-            if (as[i] > amax) amax = as[i];
-        }
+        for (i in 1 ... this.out_depth) if (as[i] > amax) amax = as[i];
 
         // compute exponentials (carefully to not blow up)
         var es:Float64Array = Utils.zeros(this.out_depth);
-        var esum:Float = 0.0;
+        var esum:Float = 0;
 
-        for(i in 0 ... this.out_depth) {
+        for (i in 0 ... this.out_depth) {
             var e:Float = Math.exp(as[i] - amax);
             esum += e;
             es[i] = e;
@@ -59,22 +57,21 @@ class LayerSoftmax extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Null<Float> {
+    override public function backward(y:Null<Int> = null):Null<Float> {
         // compute and accumulate gradient wrt weights and bias of this layer
         var x:Vol = this.in_act;
+
         x.dw = Utils.zeros(x.w.length); // zero out the gradient of input Vol
 
-        var yValue:Int = Std.int(y[0]);
-
-        for(i in 0 ... this.out_depth) {
-            var indicator:Float = i == yValue ? 1.0 : 0.0;
+        for (i in 0 ... this.out_depth) {
+            var indicator:Float = i == y ? 1.0 : 0.0;
             var mul:Float = -(indicator - this.es[i]);
 
             x.dw[i] = mul;
         }
 
         // loss is the class negative log likelihood
-        return - Math.log(this.es[yValue]);
+        return -Math.log(this.es[y]);
     }
 
     public function toJSON():JsonLayerSoftmax {

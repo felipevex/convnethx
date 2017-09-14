@@ -37,6 +37,10 @@ class LayerFullyConn extends Layer {
     }
 
     override public function forward(V:Vol, is_training:Bool = false):Vol {
+        // INFO:
+        // out_depth == opt.num_neurons
+        // num_inputs == opt.in_sx * opt.in_sy * opt.in_depth
+
         this.in_act = V;
 
         var A:Vol = new Vol(1, 1, this.out_depth, 0);
@@ -46,8 +50,8 @@ class LayerFullyConn extends Layer {
             var a:Float = 0.0;
             var wi:Float64Array = this.filters[i].w;
 
-            for(d in 0 ... this.num_inputs) {
-                a += Vw[d] * wi[d]; // for efficiency use Vols directly for now
+            for (j in 0 ... this.num_inputs) {
+                a += Vw[j] * wi[j]; // for efficiency use Vols directly for now
             }
 
             a += this.biases.w[i];
@@ -58,7 +62,7 @@ class LayerFullyConn extends Layer {
         return this.out_act;
     }
 
-    override public function backward(y:Array<Float> = null):Null<Float> {
+    override public function backward(y:Null<Int> = null):Null<Float> {
         var V:Vol = this.in_act;
 
         V.dw = Utils.zeros(V.w.length); // zero out the gradient in input Vol
