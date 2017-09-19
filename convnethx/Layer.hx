@@ -21,8 +21,8 @@ class Layer {
     public var sx:Int;
     public var sy:Int;
 
-    public var l1_decay_mul:Float;
-    public var l2_decay_mul:Float;
+    public var l1_decay_mul:Null<Float>;
+    public var l2_decay_mul:Null<Float>;
 
     public var layer_type:LayerType;
 

@@ -27,30 +27,32 @@ class Trainer {
     public var regression:Bool;
 
 
-    public function new(net:Net, options:TrainerOptions) {
+    public function new(net:Net, options:TrainerOptions = null) {
         this.net = net;
 
-        this.learning_rate =        options.learning_rate != null ? options.learning_rate : 0.01;
-        this.l1_decay =             options.l1_decay != null ? options.l1_decay : 0.0;
-        this.l2_decay =             options.l2_decay != null ? options.l2_decay : 0.0;
-        this.batch_size =           options.batch_size != null ? options.batch_size : 1;
-        this.method =               options.method != null ? options.method : TrainerMethod.SDG; // sgd/adam/adagrad/adadelta/windowgrad/netsterov
+        if (options == null) options = {};
 
-        this.momentum =             options.momentum != null ? options.momentum : 0.9;
-        this.ro =                   options.ro != null ? options.ro : 0.95; // used in adadelta
-        this.eps =                  options.eps != null ? options.eps : 1e-8; // used in adam or adadelta
-        this.beta1 =                options.beta1 != null ? options.beta1 : 0.9; // used in adam
-        this.beta2 =                options.beta2 != null ? options.beta2 : 0.999; // used in adam
+        this.learning_rate = options.learning_rate != null ? options.learning_rate : 0.01;
+        this.l1_decay = options.l1_decay != null ? options.l1_decay : 0.0;
+        this.l2_decay = options.l2_decay != null ? options.l2_decay : 0.0;
+        this.batch_size = options.batch_size != null ? options.batch_size : 1;
+        this.method = options.method != null ? options.method : TrainerMethod.SDG; // sgd/adam/adagrad/adadelta/windowgrad/netsterov
+
+        this.momentum = options.momentum != null ? options.momentum : 0.9;
+        this.ro = options.ro != null ? options.ro : 0.95; // used in adadelta
+        this.eps = options.eps != null ? options.eps : 1e-8; // used in adam or adadelta
+        this.beta1 = options.beta1 != null ? options.beta1 : 0.9; // used in adam
+        this.beta2 = options.beta2 != null ? options.beta2 : 0.999; // used in adam
 
         // check if regression is expected
         this.regression = this.net.layers[this.net.layers.length - 1].layer_type == LayerType.REGRESSION;
     }
 
-    public function train(x:Vol, ?y:Int, ?yItens:Array<Int>, ?volList:Array<Vol> = null) {
+    public function train(x:Vol, ?y:Int, ?volList:Array<Vol> = null) {
+
         var start:Float = Date.now().getTime();
         this.net.forward(x, true); // also set the flag that lets the net know we're just training
         var end:Float = Date.now().getTime();
-
         var fwd_time:Float = end - start;
 
 
@@ -59,7 +61,6 @@ class Trainer {
         var l2_decay_loss:Float = 0.0;
         var l1_decay_loss:Float = 0.0;
         var end:Float = Date.now().getTime();
-
         var bwd_time:Float = end - start;
 
         if (this.regression && volList == null)

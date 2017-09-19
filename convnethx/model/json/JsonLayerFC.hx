@@ -9,8 +9,8 @@ typedef JsonLayerFC = {
 
     var layer_type:LayerType;
     var num_inputs:Int;
-    var l1_decay_mul:Float;
-    var l2_decay_mul:Float;
+    var l1_decay_mul:Null<Float>;
+    var l2_decay_mul:Null<Float>;
 
     var filters:Array<JsonVol>;
 

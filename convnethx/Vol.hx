@@ -53,10 +53,8 @@ class Vol {
                 // weight normalization is done to equalize the output
                 // variance of every neuron, otherwise neurons with a lot
                 // of incoming connections have outputs of larger variance
-
-                var scale:Float = Math.sqrt(1.0 / (sx * sy * depth));
+                var scale:Float = Math.sqrt(1/(sx * sy * depth));
                 for (i in 0 ... n) this.w.set(i, Utils.randn(0, scale));
-
             } else {
                 for (i in 0 ... this.w.length) this.w.set(i, constantValue);
 
@@ -83,8 +81,8 @@ class Vol {
     }
 
     public function setConst(constValue:Float):Void for (i in 0 ... this.w.length) this.w[i] = constValue;
-    public function addFrom(vol:Vol):Void for (i in 0 ... this.w.length) this.w[i] += vol.w[i];
-    public function addFromScaled(vol:Vol, scale:Float):Void for (i in 0 ... this.w.length) this.w[i] += (scale * vol.w[i]);
+    public function addFrom(vol:Vol):Void if (this.w.length != vol.w.length) throw "Wrong volume sizes" else for (i in 0 ... this.w.length) this.w[i] += vol.w[i];
+    public function addFromScaled(vol:Vol, scale:Float):Void if (this.w.length != vol.w.length) throw "Wrong volume sizes" else for (i in 0 ... this.w.length) this.w[i] += (scale * vol.w[i]);
 
     // todo: we may want to only save d most significant digits to save space
     public function toJSON():JsonVol {

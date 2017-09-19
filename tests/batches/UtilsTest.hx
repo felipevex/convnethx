@@ -10,17 +10,33 @@ class UtilsTest {
 
     }
 
-//    public function test_randoms():Void {
-//        var rand1 = Utils.randf(1, 2);
-//        var rand2 = Utils.randi(1, 2);
-//        var rand3 = Utils.randn(1, 1);
-//        var rand4 = Utils.randperm(5);
-//
-//        trace(rand1);
-//        trace(rand2);
-//        trace(rand3);
-//        trace(rand4);
-//    }
+    public function test_tahn():Void {
+        Assert.floatEquals(0.761594156, Utils.tanh(1), 1e-9);
+        Assert.floatEquals(0.96402758, Utils.tanh(2), 1e-9);
+        Assert.floatEquals(0.995054754, Utils.tanh(3), 1e-9);
+        Assert.floatEquals(0.022995945, Utils.tanh(0.023), 1e-9);
+        Assert.floatEquals(0.022995945, Utils.tanh(0.023), 1e-9);
+        Assert.floatEquals(0.001999997, Utils.tanh(0.002), 1e-9);
+    }
+
+    public function test_randf():Void {
+        var rlist:Array<Float> = [for (i in 0 ... 50) Utils.randf(2, 4)];
+        for (value in rlist) Assert.isTrue(value >= 2 && value < 4);
+    }
+
+    public function test_randi():Void {
+        var rlist:Array<Float> = [for (i in 0 ... 50) Utils.randi(2, 4)];
+        for (value in rlist) Assert.isTrue(value == 2 || value == 3);
+    }
+
+    public function test_randp():Void {
+        var rlist:Array<Array<Int>> = [for (i in 0 ... 30) Utils.randperm(10)];
+
+        for (value in rlist) {
+            for (i in 0 ... 10) value.remove(i);
+            Assert.isTrue(value.length == 0);
+        }
+    }
 
     public function test_maxmin():Void {
         var value:DefMaxMinValue = Utils.maxmin([-0.1, -1.2, 30, 5, 0.0001, 229.34]);

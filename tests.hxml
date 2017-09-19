@@ -2,4 +2,8 @@
 -lib utest
 -main tests.Main
 
--neko convtests.n
+#-neko convtests.n
+
+
+#-php build/php
+-cpp build/cpp

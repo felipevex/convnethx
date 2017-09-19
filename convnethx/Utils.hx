@@ -15,10 +15,13 @@ class Utils {
             return v_val;
         }
 
+        // number between -1 and 1
         var u:Float = 2 * Math.random() - 1;
         var v:Float = 2 * Math.random() - 1;
+
         var r:Float = u * u + v * v;
 
+        // bad values... repeat.
         if (r == 0 || r > 1) return gaussRandom();
 
         var c:Float = Math.sqrt(-2 * Math.log(r) / r);
@@ -29,7 +32,9 @@ class Utils {
         return u * c;
     }
 
-
+    /**
+    * Generates a random float number between A and B, including A.
+    **/
     public inline static function randf(a:Float, b:Float):Float {
         #if convdebug
         return a;
@@ -46,7 +51,15 @@ class Utils {
         #if convdebug
         return mu;
         #else
-        return mu + gaussRandom() * std;
+        var result:Float = mu + gaussRandom() * std;
+
+        #if js
+//        js.Browser.console.log("randn", mu, std, result);
+        #else
+//        trace("randn", mu, std, result);
+        #end
+
+        return result;
         #end
     }
 

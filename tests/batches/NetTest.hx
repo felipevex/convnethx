@@ -49,6 +49,7 @@ class NetTest {
 
     public function teardown():Void {
         this.net = null;
+        this.trainer = null;
     }
 
     public function test_forward_volumes():Void {
@@ -113,7 +114,7 @@ class NetTest {
 
         this.trainer.train(x, gti); // computes gradients at all layers, and at x
 
-        var delta:Float = 0.000001;
+        var delta:Float = 0.0001;
 
         for (i in 0 ... x.w.length) {
             var grad_analytic:Float = x.dw[i];
